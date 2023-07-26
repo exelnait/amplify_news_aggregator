@@ -1,0 +1,20 @@
+{
+  "name": "amplify-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".",
+  "scripts": {
+    "amplify:NewsAggregatorPropertyResizedPicture": "cd amplify/backend/function/NewsAggregatorPropertyResizedPicture/src && npm run build",
+    "amplify:NewsAggregatorAggregateRSSFeed": "cd amplify/backend/function/NewsAggregatorAggregateRSSFeed/src && npm run build",
+    "amplify:NewsAggregatorAggregateYouTubeFeed": "cd amplify/backend/function/NewsAggregatorAggregateYouTubeFeed/src && npm run build",
+    "amplify:NewsAggregatorAggregateITunesFeed": "cd amplify/backend/function/NewsAggregatorAggregateITunesFeed/src && npm run build",
+    "amplify:NewsAggregatorCreatePublisher": "cd amplify/backend/function/NewsAggregatorCreatePublisher/src && npm run build",
+    "amplify:NewsAggregatorDynamoDBTriggerNewsItemNormalize": "cd amplify/backend/function/NewsAggregatorDynamoDBTriggerNewsItemNormalize/src && npm run build",
+    "amplify:NewsAggregatorGetNewsItemRSS": "cd amplify/backend/function/NewsAggregatorGetNewsItemRSS/src && npm run build",
+    "build:functions": "amplify function build",
+    "build:gql": "amplify api gql-compile && amplify codegen",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

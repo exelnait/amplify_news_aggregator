@@ -1,0 +1,236 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+
+# Query
+
+input GetNewsItemRSSInput {
+    id: String!
+}
+
+type Query {
+    getNewsItemRSS(input: GetNewsItemRSSInput!): NewsItem @function(name: "NewsAggregatorGetNewsItemRSS-${env}")
+}
+
+# Mutation
+
+input CreatePublisherSourceRSSInput {
+    url: String!
+}
+
+input CreatePublisherSourceYoutubeInput {
+    username: String
+    channelID: String
+}
+
+input CreatePublisherSourceTwitterInput {
+    username: String!
+}
+
+input CreatePublisherSourceCustomInput {
+    type: SourceType!
+    rss: CreatePublisherSourceRSSInput
+    youtube: CreatePublisherSourceYoutubeInput
+    twitter: CreatePublisherSourceTwitterInput
+    itunes: CreatePublisherSourceRSSInput
+}
+
+input CreatePublisherCustomInput {
+    title: String
+    description: String
+    avatarUrl: String
+    coverUrl: String
+    topicID: ID!
+    websiteUrl: String
+    sources: [CreatePublisherSourceCustomInput!]
+}
+
+type Mutation {
+    createPublisherCustom(input: CreatePublisherCustomInput!): Publisher! @function(name: "NewsAggregatorCreatePublisher-${env}")
+}
+
+# Common
+
+enum SourceType {
+    CUSTOM
+    RSS
+    YOUTUBE
+    TWITTER
+    ITUNES
+    WEBSITE
+}
+
+type Topic @model @auth(rules: [{allow: public}]) {
+    id: ID!
+    title: String!
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
+
+    publishers: [Publisher!]! @hasMany(indexName: "byTopic", fields: ["id"])
+    news: [NewsItem!]! @hasMany(indexName: "byTopic", fields: ["id"])
+}
+
+type Picture @model @auth(rules: [{allow: public}]) {
+    id: ID!
+    type: PictureType!
+    bucket: String!
+    key: String!
+    resized(input: ResizedImageCustomInput): ResizedPicture @function(name: "NewsAggregatorPropertyResizedPicture-${env}")
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
+}
+
+input ResizedImageCustomInput {
+    width: Int!
+    height: Int!
+}
+
+type ResizedPicture {
+    original: String!
+    custom: String!
+    small: String!
+    medium: String!
+    large: String!
+}
+
+enum Language {
+    RU
+    EN
+}
+
+enum PictureType {
+    AVATAR
+    COVER
+}
+
+# NewsItem
+
+type NewsItemDataRSS {
+    url: String!
+    ampUrl: String
+    categories: [String!]
+    author: String
+    isScraped: Boolean!
+
+    # After scraping
+    coverUrl: String
+    contentHtml: String
+    contentText: String
+    contentJson: String
+    wordsCount: Int
+    readingDurationInMilliseconds: Int
+
+    # After nlp
+    keywords: [String!]
+    summary: String
+}
+
+type NewsItemDataYouTube {
+    videoId: String!
+    coverUrl: String
+
+    # After scraping
+#    keywords: [String!]
+#    summary: String
+#    durationInMilliseconds: Int
+}
+
+type NewsItemDataITunes {
+    audioUrl: String!
+    coverUrl: String
+    keywords: [String!]
+    durationFormatted: String
+}
+
+
+type NewsItem @model @auth(rules: [{allow: public}]) @searchable {
+    id: String! @primaryKey(sortKeyFields: ["publishedAt"])
+    type: SourceType!
+    title: String!
+    description: String!
+    publishedAt: AWSDateTime!
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
+
+    coverID: ID
+    cover: Picture @hasOne(fields: ["coverID"])
+    publisherID: ID! @index(name: "byPublisher", sortKeyFields: ["publishedAt"])
+    publisher: Publisher! @belongsTo(fields: ["publisherID"])
+    topicID: ID! @index(name: "byTopic", sortKeyFields: ["publishedAt"])
+    topic: Topic! @belongsTo(fields: ["topicID"])
+
+    rss: NewsItemDataRSS
+    youtube: NewsItemDataYouTube
+    itunes: NewsItemDataITunes
+
+    viewsCount: Int! @default(value: "0")
+}
+
+# Publisher
+
+type PublisherSourceWebsite {
+    url: String!
+}
+
+type PublisherSourceRSS {
+    url: String!
+}
+
+type PublisherSourceYouTube {
+    playlistUrl: String
+    channelID: String!
+    username: String
+}
+
+type PublisherSourceITunes {
+    url: String!
+}
+
+type PublisherSourceTwitter {
+    username: String!
+}
+
+type PublisherSource @model @auth(rules: [{allow: public}]) {
+    id: ID!
+    type: String! @index(name: "byType") # SourceType enum
+    title: String
+    isHidden: Boolean!
+    publisherTopicID: ID! @index(name: "byPublisherTopic")
+    publisherID: ID! @index(name: "byPublisherAndType", sortKeyFields: ["type"])
+
+    website: PublisherSourceWebsite
+    rss: PublisherSourceRSS
+    youtube: PublisherSourceYouTube
+    twitter: PublisherSourceTwitter
+    itunes: PublisherSourceITunes
+}
+
+type Publisher @model @auth(rules: [{allow: public}]) {
+    id: ID!
+    title: String!
+    description: String!
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
+
+    topicID: ID! @index(name: "byTopic")
+    topic: Topic! @belongsTo(fields: ["topicID"])
+    sources: [PublisherSource!]! @hasMany(indexName: "byPublisherAndType", fields: ["id"])
+    avatarID: ID!
+    avatar: Picture! @hasOne(fields: ["avatarID"])
+    coverID: ID
+    cover: Picture @hasOne(fields: ["coverID"])
+    
+    news: [NewsItem!]! @hasMany(indexName: "byPublisher", fields: ["id"])
+}
+
+# User
+
+type User @model @auth(rules: [{allow: public}]) {
+    id: ID!
+    userName: String! @index(name: "byUserName", queryField: "getUserByUserName")
+    email: String!
+
+    createdAt: AWSDateTime!
+    updatedAt: AWSDateTime!
+}

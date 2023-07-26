@@ -1,0 +1,39 @@
+{
+  "lambdaLayers": [],
+  "permissions": {
+    "function": {
+      "NewsAggregatorAggregateITunesFeed": [
+        "read"
+      ],
+      "NewsAggregatorAggregateRSSFeed": [
+        "read"
+      ],
+      "NewsAggregatorAggregateYouTubeFeed": [
+        "read"
+      ]
+    },
+    "storage": {
+      "NewsAggregatorStorage": [
+        "create"
+      ],
+      "Picture:@model(appsync)": [
+        "create",
+        "update"
+      ],
+      "PublisherSource:@model(appsync)": [
+        "create",
+        "update"
+      ],
+      "Publisher:@model(appsync)": [
+        "create",
+        "update"
+      ]
+    }
+  },
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "youtubeApiKey",
+      "environmentVariableName": "YOUTUBE_API_KEY"
+    }
+  ]
+}

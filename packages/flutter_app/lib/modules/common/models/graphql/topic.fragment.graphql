@@ -1,0 +1,4 @@
+fragment TopicBase on Topic {
+    id
+    title
+}

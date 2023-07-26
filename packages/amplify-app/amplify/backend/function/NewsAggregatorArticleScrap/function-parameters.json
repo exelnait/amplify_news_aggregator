@@ -1,0 +1,9 @@
+{
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "nltkData",
+      "environmentVariableName": "NLTK_DATA"
+    }
+  ]
+}

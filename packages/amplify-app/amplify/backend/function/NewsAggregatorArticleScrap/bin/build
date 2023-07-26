@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+
+export IMAGE_NAME=python-ml-layer
+
+
+
+docker build \
+  --no-cache \
+  --tag $IMAGE_NAME \
+  .
+
+docker run \
+  --rm \
+  --volume "${PWD}/build:/src" \
+  "${IMAGE_NAME}:latest" \
+  sh -c "cp -r /build/* /src"

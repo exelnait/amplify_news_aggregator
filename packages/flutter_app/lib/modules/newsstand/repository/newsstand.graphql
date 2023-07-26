@@ -1,0 +1,15 @@
+#import '../../publisher/models/graphql/publisher_info.fragment.graphql'
+
+query GetNewsStand {
+    listTopics {
+      items {
+        id
+        title
+          publishers {
+            items {
+              ...PublisherInfo
+            }
+          }
+      }
+    }
+}

@@ -1,0 +1,63 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-newsaggregator-dev-123111-authRole",
+      "UnauthRoleArn": "arn:aws:iam::981704123805:role/amplify-newsaggregator-dev-123111-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::981704123805:role/amplify-newsaggregator-dev-123111-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+      "UnauthRoleName": "amplify-newsaggregator-dev-123111-unauthRole",
+      "StackName": "amplify-newsaggregator-dev-123111",
+      "StackId": "arn:aws:cloudformation:eu-central-1:981704123805:stack/amplify-newsaggregator-dev-123111/611b6fa0-2ad6-11ee-a9ac-062800af1b86",
+      "AmplifyAppId": "d29hoxfyo0vdci"
+    },
+    "categories": {
+      "auth": {
+        "newsaggregator877980c6": {}
+      },
+      "function": {
+        "NewsAggregatorPropertyResizedPicture": {
+          "deploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+          "s3Key": "amplify-builds/NewsAggregatorPropertyResizedPicture-684365726a466b635778-build.zip",
+          "cdnUrl": "https://dewvn0r22hrtl.cloudfront.net"
+        },
+        "NewsAggregatorGetNewsItemRSS": {
+          "deploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+          "s3Key": "amplify-builds/NewsAggregatorGetNewsItemRSS-397937736471396d4a37-build.zip"
+        },
+        "NewsAggregatorAggregateITunesFeed": {
+          "deploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+          "s3Key": "amplify-builds/NewsAggregatorAggregateITunesFeed-66453448536f5761486f-build.zip"
+        },
+        "NewsAggregatorAggregateRSSFeed": {
+          "deploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+          "s3Key": "amplify-builds/NewsAggregatorAggregateRSSFeed-785949694d3475754d76-build.zip"
+        },
+        "NewsAggregatorAggregateYouTubeFeed": {
+          "deploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+          "s3Key": "amplify-builds/NewsAggregatorAggregateYouTubeFeed-4273646b686166557136-build.zip"
+        },
+        "NewsAggregatorCreatePublisher": {
+          "deploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+          "s3Key": "amplify-builds/NewsAggregatorCreatePublisher-6d49633361783136476c-build.zip",
+          "youtubeApiKey": "AIzaSyAHJrziBjPsRdAExfnNv6pT4IIHTtovNHQ"
+        },
+        "NewsAggregatorArticleScrap": {
+          "deploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+          "s3Key": "amplify-builds/NewsAggregatorArticleScrap-4b6d6d4779682f61646e-build.zip",
+          "nltkData": "./nltk_data"
+        },
+        "NewsAggregatorDynamoDBTriggerNewsItemNormalize": {
+          "deploymentBucketName": "amplify-newsaggregator-dev-123111-deployment",
+          "s3Key": "amplify-builds/NewsAggregatorDynamoDBTriggerNewsItemNormalize-6b624e656c656f444641-build.zip"
+        }
+      },
+      "api": {
+        "newsaggregator": {}
+      },
+      "storage": {
+        "NewsAggregatorStorage": {}
+      }
+    }
+  }
+}

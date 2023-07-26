@@ -1,0 +1,30 @@
+#import '../../../publisher/models/publisher_info.fragment.graphql'
+
+fragment NewsItemBasic on NewsItem {
+    id
+    title
+    description
+    type
+    publishedAt
+    cover {
+        resized {
+            medium
+        }
+    }
+    rss {
+        url
+        coverUrl
+    }
+    youtube {
+        videoId
+        coverUrl
+    }
+    itunes {
+        audioUrl
+        coverUrl
+        durationFormatted
+    }
+    publisher {
+        ...PublisherInfo
+    }
+}

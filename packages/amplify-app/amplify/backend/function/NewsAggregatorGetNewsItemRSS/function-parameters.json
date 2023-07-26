@@ -1,0 +1,30 @@
+{
+  "lambdaLayers": [],
+  "permissions": {
+    "function": {
+      "NewsAggregatorArticleScrap": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    },
+    "storage": {
+      "NewsAggregatorStorage": [
+        "read"
+      ],
+      "Picture:@model(appsync)": [
+        "create",
+        "update"
+      ],
+      "NewsItem:@model(appsync)": [
+        "create",
+        "read",
+        "update"
+      ],
+      "PublisherSource:@model(appsync)": [
+        "read"
+      ]
+    }
+  }
+}

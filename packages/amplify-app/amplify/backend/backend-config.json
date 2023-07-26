@@ -1,0 +1,392 @@
+{
+  "api": {
+    "newsaggregator": {
+      "dependsOn": [],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [],
+          "defaultAuthentication": {
+            "apiKeyConfig": {
+              "apiKeyExpirationDate": "2024-07-24T10:37:38.027Z",
+              "apiKeyExpirationDays": 365,
+              "description": ""
+            },
+            "authenticationType": "API_KEY"
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "auth": {
+    "newsaggregator877980c6": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    }
+  },
+  "function": {
+    "NewsAggregatorAggregateITunesFeed": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "NewsAggregatorStorage"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "NewsAggregatorAggregateRSSFeed": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "NewsAggregatorStorage"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "NewsAggregatorAggregateYouTubeFeed": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "NewsAggregatorStorage"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "NewsAggregatorArticleScrap": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "NewsAggregatorCreatePublisher": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateITunesFeed"
+        },
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateRSSFeed"
+        },
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateYouTubeFeed"
+        },
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "NewsAggregatorStorage"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "NewsAggregatorDynamoDBTriggerNewsItemNormalize": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput",
+            "GraphQLAPIEndpointOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        },
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "NewsAggregatorArticleScrap"
+        },
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "NewsAggregatorStorage"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "NewsAggregatorGetNewsItemRSS": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "NewsAggregatorArticleScrap"
+        },
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "NewsAggregatorStorage"
+        },
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "NewsAggregatorPropertyResizedPicture": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_NewsAggregatorAggregateITunesFeed_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateITunesFeed"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorAggregateITunesFeed_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateITunesFeed"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorAggregateRSSFeed_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateRSSFeed"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorAggregateRSSFeed_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateRSSFeed"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorAggregateYouTubeFeed_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateYouTubeFeed"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorAggregateYouTubeFeed_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorAggregateYouTubeFeed"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorArticleScrap_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorArticleScrap"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorArticleScrap_nltkData": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorArticleScrap"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorArticleScrap_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorArticleScrap"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorCreatePublisher_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorCreatePublisher"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorCreatePublisher_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorCreatePublisher"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorCreatePublisher_youtubeApiKey": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorCreatePublisher"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorDynamoDBTriggerNewsItemNormalize_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorDynamoDBTriggerNewsItemNormalize"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorDynamoDBTriggerNewsItemNormalize_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorDynamoDBTriggerNewsItemNormalize"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorGetNewsItemRSS_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorGetNewsItemRSS"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorGetNewsItemRSS_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorGetNewsItemRSS"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorPropertyResizedPicture_cdnUrl": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorPropertyResizedPicture"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorPropertyResizedPicture_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorPropertyResizedPicture"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorPropertyResizedPicture_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorPropertyResizedPicture"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "NewsAggregatorStorage": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3"
+    }
+  }
+}

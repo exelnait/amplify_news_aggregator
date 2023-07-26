@@ -1,0 +1,25 @@
+{
+  "arguments": {
+    "input": {
+      "title": "Smashing Magazine",
+      "topicID": "8bb5e0ef-2d88-4966-8c3f-6fa3dc1bfbe2",
+      "sources": [{
+        "rss": {
+          "url": "https://www.smashingmagazine.com/feed/"
+        },
+        "type": "RSS"
+      }, {
+        "twitter": {
+          "username": "smashingmag"
+        },
+        "type": "TWITTER"
+      }, {
+        "itunes": {
+          "url": "https://feeds.transistor.fm/smashing"
+        },
+        "type": "ITUNES"
+      }],
+      "websiteUrl": "https://www.smashingmagazine.com/"
+    }
+  }
+}

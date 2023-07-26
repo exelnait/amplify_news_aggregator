@@ -1,0 +1,17 @@
+{
+  "lambdaLayers": [],
+  "permissions": {
+    "storage": {
+      "NewsAggregatorStorage": [
+        "create"
+      ],
+      "NewsItem:@model(appsync)": [
+        "create",
+        "update"
+      ],
+      "PublisherSource:@model(appsync)": [
+        "read"
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+
+analyzer:
+  exclude:
+    - lib/models/*.dart
+    - lib/**/*.graphql.dart
+    - lib/**/*.g.dart
+    #  enable-experiment:
+    #  - nonfunction-type-aliases
+  errors:
+    undefined_prefixed_name: ignore

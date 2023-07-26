@@ -1,0 +1,4 @@
+fragment PublisherSourceBase on PublisherSource {
+    title
+    type
+}

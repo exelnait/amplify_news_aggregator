@@ -1,0 +1,23 @@
+#import '../../../publisher/models/publisher_info.fragment.graphql'
+#import './news_item_basic.fragment.graphql'
+
+fragment NewsItemFull on NewsItem {
+    ...NewsItemBasic
+    rss {
+        url
+        coverUrl
+        contentJson
+        summary
+        categories
+        author
+    }
+    youtube {
+        videoId
+        coverUrl
+    }
+    itunes {
+        audioUrl
+        coverUrl
+        durationFormatted
+    }
+}
