@@ -1,0 +1,42 @@
+{
+  "name": "web-app",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/web-app",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build:graphql": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["graphql-codegen --config codegen.ts"],
+        "cwd": "packages/web-app",
+        "parallel": false
+      }
+    },
+    "build": {
+      "command": "remix build",
+      "options": {
+        "cwd": "packages/web-app"
+      }
+    },
+    "serve": {
+      "command": "remix dev",
+      "options": {
+        "cwd": "packages/web-app"
+      }
+    },
+    "start": {
+      "dependsOn": ["build"],
+      "command": "remix-serve build",
+      "options": {
+        "cwd": "packages/web-app"
+      }
+    },
+    "typecheck": {
+      "command": "tsc",
+      "options": {
+        "cwd": "packages/web-app"
+      }
+    }
+  }
+}
