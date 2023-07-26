@@ -11,6 +11,8 @@
     "amplify:NewsAggregatorCreatePublisher": "cd amplify/backend/function/NewsAggregatorCreatePublisher/src && npm run build",
     "amplify:NewsAggregatorDynamoDBTriggerNewsItemNormalize": "cd amplify/backend/function/NewsAggregatorDynamoDBTriggerNewsItemNormalize/src && npm run build",
     "amplify:NewsAggregatorGetNewsItemRSS": "cd amplify/backend/function/NewsAggregatorGetNewsItemRSS/src && npm run build",
+    "amplify:NewsAggregatorMyUser": "cd amplify/backend/function/NewsAggregatorMyUser/src && npm run build",
+    "amplify:newsaggregator877980c6PostConfirmation": "cd amplify/backend/function/newsaggregator877980c6PostConfirmation/src && npm run build",
     "build:functions": "amplify function build",
     "build:gql": "amplify api gql-compile && amplify codegen",
     "test": "echo \"Error: no test specified\" && exit 1"

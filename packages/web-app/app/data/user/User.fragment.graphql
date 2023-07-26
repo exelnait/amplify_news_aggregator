@@ -1,0 +1,3 @@
+fragment BaseUser on User {
+    id
+}

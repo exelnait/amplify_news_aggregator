@@ -1,0 +1,10 @@
+query GetNewsFeed {
+    myUser {
+        ...BaseUser
+        news {
+            items {
+                 ...BaseNewsItem
+            }
+        }
+    }
+}

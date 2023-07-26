@@ -5,9 +5,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 var clientDynamodb = require('@aws-sdk/client-dynamodb');
 var utilDynamodb = require('@aws-sdk/util-dynamodb');
 var crypto = require('crypto');
-var clientLambda = require('@aws-sdk/client-lambda');
-var perf_hooks = require('perf_hooks');
 var Parser = require('@postlight/parser');
+var perf_hooks = require('perf_hooks');
 var cheerio = require('cheerio');
 var util = require('util');
 var imageSize = require('request-image-size');
@@ -61,7 +60,6 @@ const unmarshallOptions = {
 const docClient = new clientDynamodb.DynamoDBClient({});
 const TABLES = {
     User: process.env.API_NEWSAGGREGATOR_USERTABLE_NAME,
-    UserPublisherSubscription: process.env.API_NEWSAGGREGATOR_USERPUBLISHERSUBSCRIPTIONTABLE_NAME,
     Publisher: process.env.API_NEWSAGGREGATOR_PUBLISHERTABLE_NAME,
     Picture: process.env.API_NEWSAGGREGATOR_PICTURETABLE_NAME,
     PublisherSource: process.env.API_NEWSAGGREGATOR_PUBLISHERSOURCETABLE_NAME,
@@ -81,8 +79,8 @@ function getItemById(tableName, id) {
     return __awaiter(this, void 0, void 0, function* () {
         const params = {
             TableName: TABLES.NewsItem,
-            KeyConditionExpression: "id = :id",
-            ExpressionAttributeValues: { ":id": { "S": id } }
+            KeyConditionExpression: 'id = :id',
+            ExpressionAttributeValues: { ':id': { S: id } },
         };
         return getItem(params);
     });
@@ -105,41 +103,6 @@ function getNewsItemById(id) {
 }
 function updateNewsItem(newsItem) {
     return putItem(TABLES.NewsItem, newsItem, "NewsItem");
-}
-
-const client = new clientLambda.LambdaClient({});
-function invokeLambda(name, input, invocationType = clientLambda.InvocationType.RequestResponse) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const command = new clientLambda.InvokeCommand({
-            FunctionName: name,
-            Payload: jsonToUint8Array(input),
-            InvocationType: invocationType
-        });
-        const response = yield client.send(command);
-        return uint8ArrayToJSON(response.Payload);
-    });
-}
-// Convert string to uint8Array
-function jsonToUint8Array(data) {
-    const encoder = new TextEncoder();
-    return encoder.encode(JSON.stringify(data));
-}
-function uint8ArrayToJSON(array) {
-    const decoder = new TextDecoder();
-    return JSON.parse(decoder.decode(array));
-}
-
-const SCRAP_ARTICLE_LAMBDA_NAME = process.env.FUNCTION_NEWSAGGREGATORARTICLESCRAP_NAME;
-function scrapArticle(url) {
-    const startTime = perf_hooks.performance.now();
-    return invokeLambda(SCRAP_ARTICLE_LAMBDA_NAME, {
-        arguments: {
-            url
-        }
-    }).then((response) => {
-        console.log(`Scrap article lambda time: ${perf_hooks.performance.now() - startTime}ms`);
-        return response;
-    });
 }
 
 function parseArticle(url) {
@@ -540,15 +503,17 @@ function normalizeNewsItemFromRSS(item, options = {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const startTime = perf_hooks.performance.now();
-            const [scrapedArticle, parsedArticle] = yield Promise.all([
-                scrapArticle(item.rss.url),
-                parseArticle(item.rss.url)
-            ]);
+            // const [scrapedArticle, parsedArticle] = await Promise.all([
+            //     scrapArticle(item.rss.url),
+            //     parseArticle(item.rss.url)
+            // ]);
+            const scrapedArticle = null;
+            const parsedArticle = yield parseArticle(item.rss.url);
             const parsingTime = perf_hooks.performance.now();
             console.log(`Parsing time: ${parsingTime - startTime}ms`);
             // console.log('scrapedArticle', JSON.stringify(scrapedArticle, null, 2));
             // console.log('parsedArticle', JSON.stringify(parsedArticle, null, 2));
-            const coverUrl = parsedArticle.lead_image_url || scrapedArticle.top_image;
+            const coverUrl = parsedArticle.lead_image_url || (scrapedArticle === null || scrapedArticle === void 0 ? void 0 : scrapedArticle.top_image);
             if (!item.coverID && coverUrl) {
                 item.rss.coverUrl = coverUrl;
                 item.coverID = crypto.randomUUID(); // S3 cover creation should be later
@@ -561,14 +526,14 @@ function normalizeNewsItemFromRSS(item, options = {
             });
             item.rss.contentHtml = normalizedHtml;
             item.rss.contentJson = JSON.stringify(htmlJson);
-            item.rss.contentText = scrapedArticle.text || parsedArticle.content ? convertHtmlToText(normalizedHtml) : null;
+            item.rss.contentText = (scrapedArticle === null || scrapedArticle === void 0 ? void 0 : scrapedArticle.text) || parsedArticle.content ? convertHtmlToText(normalizedHtml) : null;
             item.rss.isScraped = true;
             console.log(`Normalize content time: ${normalizeContentTime - parsingTime}ms`);
             item.rss.wordsCount = item.rss.contentText + "" ? parsedArticle.word_count : 0;
             item.rss.readingDurationInMilliseconds = parsedArticle.word_count ? calculateReadingTimeInMillisecondsByWordsCount(parsedArticle.word_count) : 0;
             //NLP
-            item.rss.keywords = scrapedArticle.keywords;
-            item.rss.summary = scrapedArticle.summary;
+            // item.rss.keywords = scrapedArticle.keywords
+            // item.rss.summary = scrapedArticle.summary
             console.log(`Normalize news item time: ${perf_hooks.performance.now() - startTime}ms`);
             return item;
         }

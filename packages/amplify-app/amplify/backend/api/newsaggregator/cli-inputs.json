@@ -4,10 +4,17 @@
     "apiName": "newsaggregator",
     "serviceName": "AppSync",
     "defaultAuthType": {
-      "mode": "API_KEY",
-      "expirationTime": 365,
-      "apiKeyExpirationDate": "2024-07-24T10:37:38.027Z",
-      "keyDescription": ""
-    }
+      "mode": "AMAZON_COGNITO_USER_POOLS",
+      "cognitoUserPoolId": "authnewsaggregator877980c6"
+    },
+    "conflictResolution": {},
+    "additionalAuthTypes": [
+      {
+        "mode": "API_KEY",
+        "expirationTime": 365,
+        "apiKeyExpirationDate": "2024-07-25T18:28:55.481Z",
+        "keyDescription": ""
+      }
+    ]
   }
 }

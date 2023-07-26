@@ -1,25 +1,25 @@
 {
   "arguments": {
     "input": {
-      "title": "Smashing Magazine",
-      "topicID": "8bb5e0ef-2d88-4966-8c3f-6fa3dc1bfbe2",
+      "title": "Engadget",
+      "topicID": "ce071ed4-d718-4d23-b32e-067d27f74832",
       "sources": [{
         "rss": {
-          "url": "https://www.smashingmagazine.com/feed/"
+          "url": "https://www.engadget.com/rss.xml"
         },
         "type": "RSS"
-      }, {
-        "twitter": {
-          "username": "smashingmag"
+      },{
+        "youtube": {
+          "url": "https://www.youtube.com/@Engadget"
         },
-        "type": "TWITTER"
-      }, {
+        "type": "YOUTUBE"
+      },{
         "itunes": {
-          "url": "https://feeds.transistor.fm/smashing"
+          "url": "https://rss.art19.com/engadget-pod"
         },
         "type": "ITUNES"
       }],
-      "websiteUrl": "https://www.smashingmagazine.com/"
+      "websiteUrl": "https://kotaku.com/"
     }
   }
 }

@@ -27,6 +27,9 @@
       "Publisher:@model(appsync)": [
         "create",
         "update"
+      ],
+      "User:@model(appsync)": [
+        "read"
       ]
     }
   },

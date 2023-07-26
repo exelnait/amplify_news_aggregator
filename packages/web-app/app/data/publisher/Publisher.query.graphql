@@ -1,0 +1,14 @@
+query ListPublishers {
+    myUser {
+        topics {
+            items {
+                ...BaseTopic
+                publishers {
+                    items {
+                        ...PublisherInfo
+                    }
+                }
+            }
+        }
+    }
+}

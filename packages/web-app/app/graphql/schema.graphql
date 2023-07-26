@@ -1,0 +1,1075 @@
+input GetNewsItemRSSInput {
+  id: String!
+}
+
+type Query {
+  myUser: User!
+  getNewsItemRSS(input: GetNewsItemRSSInput!): NewsItem
+  searchNewsItems(filter: SearchableNewsItemFilterInput, sort: [SearchableNewsItemSortInput], limit: Int, nextToken: String, from: Int, aggregates: [SearchableNewsItemAggregationInput]): SearchableNewsItemConnection
+  getTopic(id: ID!): Topic
+  listTopics(filter: ModelTopicFilterInput, limit: Int, nextToken: String): ModelTopicConnection
+  getPicture(id: ID!): Picture
+  listPictures(filter: ModelPictureFilterInput, limit: Int, nextToken: String): ModelPictureConnection
+  getNewsItem(id: String!, publishedAt: AWSDateTime!): NewsItem
+  listNewsItems(id: String, publishedAt: ModelStringKeyConditionInput, filter: ModelNewsItemFilterInput, limit: Int, nextToken: String, sortDirection: ModelSortDirection): ModelNewsItemConnection
+  getPublisherSource(id: ID!): PublisherSource
+  listPublisherSources(filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
+  getPublisher(id: ID!): Publisher
+  listPublishers(filter: ModelPublisherFilterInput, limit: Int, nextToken: String): ModelPublisherConnection
+  getUser(id: ID!): User
+  listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
+  topicsByCreatorID(creatorID: ID!, sortDirection: ModelSortDirection, filter: ModelTopicFilterInput, limit: Int, nextToken: String): ModelTopicConnection
+  newsItemsByPublisherIDAndPublishedAt(publisherID: ID!, publishedAt: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelNewsItemFilterInput, limit: Int, nextToken: String): ModelNewsItemConnection
+  newsItemsByTopicIDAndPublishedAt(topicID: ID!, publishedAt: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelNewsItemFilterInput, limit: Int, nextToken: String): ModelNewsItemConnection
+  newsItemsByCreatorIDAndPublishedAt(creatorID: ID!, publishedAt: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelNewsItemFilterInput, limit: Int, nextToken: String): ModelNewsItemConnection
+  publisherSourcesByType(type: String!, sortDirection: ModelSortDirection, filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
+  publisherSourcesByPublisherTopicID(publisherTopicID: ID!, sortDirection: ModelSortDirection, filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
+  publisherSourcesByPublisherIDAndType(publisherID: ID!, type: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
+  publisherSourcesByCreatorID(creatorID: ID!, sortDirection: ModelSortDirection, filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
+  publishersByTopicID(topicID: ID!, sortDirection: ModelSortDirection, filter: ModelPublisherFilterInput, limit: Int, nextToken: String): ModelPublisherConnection
+  publishersByCreatorID(creatorID: ID!, sortDirection: ModelSortDirection, filter: ModelPublisherFilterInput, limit: Int, nextToken: String): ModelPublisherConnection
+  getUserByUserName(userName: String!, sortDirection: ModelSortDirection, filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
+}
+
+input CreatePublisherSourceRSSInput {
+  url: String!
+}
+
+input CreatePublisherSourceYoutubeInput {
+  username: String
+  channelID: String
+  url: String
+}
+
+input CreatePublisherSourceTwitterInput {
+  username: String!
+}
+
+input CreatePublisherSourceCustomInput {
+  type: SourceType!
+  rss: CreatePublisherSourceRSSInput
+  youtube: CreatePublisherSourceYoutubeInput
+  twitter: CreatePublisherSourceTwitterInput
+  itunes: CreatePublisherSourceRSSInput
+}
+
+input CreatePublisherCustomInput {
+  title: String!
+  description: String
+  avatarUrl: String
+  coverUrl: String
+  topicID: ID!
+  websiteUrl: String
+  sources: [CreatePublisherSourceCustomInput!]
+}
+
+type Mutation {
+  createPublisherCustom(input: CreatePublisherCustomInput!): Publisher!
+  createTopic(input: CreateTopicInput!, condition: ModelTopicConditionInput): Topic
+  updateTopic(input: UpdateTopicInput!, condition: ModelTopicConditionInput): Topic
+  deleteTopic(input: DeleteTopicInput!, condition: ModelTopicConditionInput): Topic
+  createPicture(input: CreatePictureInput!, condition: ModelPictureConditionInput): Picture
+  updatePicture(input: UpdatePictureInput!, condition: ModelPictureConditionInput): Picture
+  deletePicture(input: DeletePictureInput!, condition: ModelPictureConditionInput): Picture
+  createNewsItem(input: CreateNewsItemInput!, condition: ModelNewsItemConditionInput): NewsItem
+  updateNewsItem(input: UpdateNewsItemInput!, condition: ModelNewsItemConditionInput): NewsItem
+  deleteNewsItem(input: DeleteNewsItemInput!, condition: ModelNewsItemConditionInput): NewsItem
+  createPublisherSource(input: CreatePublisherSourceInput!, condition: ModelPublisherSourceConditionInput): PublisherSource
+  updatePublisherSource(input: UpdatePublisherSourceInput!, condition: ModelPublisherSourceConditionInput): PublisherSource
+  deletePublisherSource(input: DeletePublisherSourceInput!, condition: ModelPublisherSourceConditionInput): PublisherSource
+  createPublisher(input: CreatePublisherInput!, condition: ModelPublisherConditionInput): Publisher
+  updatePublisher(input: UpdatePublisherInput!, condition: ModelPublisherConditionInput): Publisher
+  deletePublisher(input: DeletePublisherInput!, condition: ModelPublisherConditionInput): Publisher
+  createUser(input: CreateUserInput!, condition: ModelUserConditionInput): User
+  updateUser(input: UpdateUserInput!, condition: ModelUserConditionInput): User
+  deleteUser(input: DeleteUserInput!, condition: ModelUserConditionInput): User
+}
+
+enum SourceType {
+  CUSTOM
+  RSS
+  YOUTUBE
+  TWITTER
+  ITUNES
+  WEBSITE
+}
+
+type Topic {
+  id: ID!
+  title: String!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  publishers(filter: ModelPublisherFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelPublisherConnection
+  news(publishedAt: ModelStringKeyConditionInput, filter: ModelNewsItemFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelNewsItemConnection
+  creatorID: ID!
+}
+
+type Picture {
+  id: ID!
+  type: PictureType!
+  bucket: String!
+  key: String!
+  resized(input: ResizedImageCustomInput): ResizedPicture
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+input ResizedImageCustomInput {
+  width: Int!
+  height: Int!
+}
+
+type ResizedPicture {
+  original: String!
+  custom: String!
+  small: String!
+  medium: String!
+  large: String!
+}
+
+enum Language {
+  RU
+  EN
+}
+
+enum PictureType {
+  AVATAR
+  COVER
+}
+
+type NewsItemDataRSS {
+  url: String!
+  ampUrl: String
+  categories: [String!]
+  author: String
+  isScraped: Boolean!
+  coverUrl: String
+  contentHtml: String
+  contentText: String
+  contentJson: String
+  wordsCount: Int
+  readingDurationInMilliseconds: Int
+  keywords: [String!]
+  summary: String
+}
+
+type NewsItemDataYouTube {
+  videoId: String!
+  coverUrl: String
+}
+
+type NewsItemDataITunes {
+  audioUrl: String!
+  coverUrl: String
+  keywords: [String!]
+  durationFormatted: String
+}
+
+type NewsItem {
+  id: String!
+  type: SourceType!
+  title: String!
+  description: String!
+  publishedAt: AWSDateTime!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime
+  coverID: ID
+  cover: Picture
+  publisherID: ID!
+  publisher: Publisher!
+  topicID: ID!
+  topic: Topic!
+  creatorID: ID!
+  rss: NewsItemDataRSS
+  youtube: NewsItemDataYouTube
+  itunes: NewsItemDataITunes
+}
+
+type PublisherSourceWebsite {
+  url: String!
+}
+
+type PublisherSourceRSS {
+  url: String!
+}
+
+type PublisherSourceYouTube {
+  playlistUrl: String
+  channelID: String!
+  username: String
+}
+
+type PublisherSourceITunes {
+  url: String!
+}
+
+type PublisherSourceTwitter {
+  username: String!
+}
+
+type PublisherSource {
+  id: ID!
+  type: String!
+  title: String
+  isHidden: Boolean!
+  publisherTopicID: ID!
+  publisherID: ID!
+  website: PublisherSourceWebsite
+  rss: PublisherSourceRSS
+  youtube: PublisherSourceYouTube
+  twitter: PublisherSourceTwitter
+  itunes: PublisherSourceITunes
+  creatorID: ID!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Publisher {
+  id: ID!
+  title: String!
+  description: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime
+  topicID: ID!
+  topic: Topic!
+  sources(type: ModelStringKeyConditionInput, filter: ModelPublisherSourceFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelPublisherSourceConnection
+  avatarID: ID!
+  avatar: Picture!
+  coverID: ID
+  cover: Picture
+  news(publishedAt: ModelStringKeyConditionInput, filter: ModelNewsItemFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelNewsItemConnection
+  creatorID: ID!
+}
+
+type User {
+  id: ID!
+  userName: String!
+  email: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+  publishers(filter: ModelPublisherFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelPublisherConnection
+  topics(filter: ModelTopicFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTopicConnection
+  news(publishedAt: ModelStringKeyConditionInput, filter: ModelNewsItemFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelNewsItemConnection
+}
+
+type SearchableNewsItemConnection {
+  items: [NewsItem]!
+  nextToken: String
+  total: Int
+  aggregateItems: [SearchableAggregateResult]!
+}
+
+type SearchableAggregateResult {
+  name: String!
+  result: SearchableAggregateGenericResult
+}
+
+type SearchableAggregateScalarResult {
+  value: Float!
+}
+
+type SearchableAggregateBucketResult {
+  buckets: [SearchableAggregateBucketResultItem]
+}
+
+type SearchableAggregateBucketResultItem {
+  key: String!
+  doc_count: Int!
+}
+
+union SearchableAggregateGenericResult = SearchableAggregateScalarResult | SearchableAggregateBucketResult
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelSubscriptionStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  in: [String]
+  notIn: [String]
+}
+
+input ModelSubscriptionIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  in: [Int]
+  notIn: [Int]
+}
+
+input ModelSubscriptionFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  in: [Float]
+  notIn: [Float]
+}
+
+input ModelSubscriptionBooleanInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelSubscriptionIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  in: [ID]
+  notIn: [ID]
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelTopicConnection {
+  items: [Topic]!
+  nextToken: String
+}
+
+input ModelTopicFilterInput {
+  id: ModelIDInput
+  title: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  creatorID: ModelIDInput
+  and: [ModelTopicFilterInput]
+  or: [ModelTopicFilterInput]
+  not: ModelTopicFilterInput
+}
+
+input ModelTopicConditionInput {
+  title: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  creatorID: ModelIDInput
+  and: [ModelTopicConditionInput]
+  or: [ModelTopicConditionInput]
+  not: ModelTopicConditionInput
+}
+
+input CreateTopicInput {
+  id: ID
+  title: String!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  creatorID: ID!
+}
+
+input UpdateTopicInput {
+  id: ID!
+  title: String
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  creatorID: ID
+}
+
+input DeleteTopicInput {
+  id: ID!
+}
+
+input ModelSubscriptionTopicFilterInput {
+  id: ModelSubscriptionIDInput
+  title: ModelSubscriptionStringInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  creatorID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionTopicFilterInput]
+  or: [ModelSubscriptionTopicFilterInput]
+}
+
+type Subscription {
+  onCreateTopic(filter: ModelSubscriptionTopicFilterInput): Topic @aws_subscribe(mutations: ["createTopic"])
+  onUpdateTopic(filter: ModelSubscriptionTopicFilterInput): Topic @aws_subscribe(mutations: ["updateTopic"])
+  onDeleteTopic(filter: ModelSubscriptionTopicFilterInput): Topic @aws_subscribe(mutations: ["deleteTopic"])
+  onCreatePicture(filter: ModelSubscriptionPictureFilterInput): Picture @aws_subscribe(mutations: ["createPicture"])
+  onUpdatePicture(filter: ModelSubscriptionPictureFilterInput): Picture @aws_subscribe(mutations: ["updatePicture"])
+  onDeletePicture(filter: ModelSubscriptionPictureFilterInput): Picture @aws_subscribe(mutations: ["deletePicture"])
+  onCreateNewsItem(filter: ModelSubscriptionNewsItemFilterInput): NewsItem @aws_subscribe(mutations: ["createNewsItem"])
+  onUpdateNewsItem(filter: ModelSubscriptionNewsItemFilterInput): NewsItem @aws_subscribe(mutations: ["updateNewsItem"])
+  onDeleteNewsItem(filter: ModelSubscriptionNewsItemFilterInput): NewsItem @aws_subscribe(mutations: ["deleteNewsItem"])
+  onCreatePublisherSource(filter: ModelSubscriptionPublisherSourceFilterInput): PublisherSource @aws_subscribe(mutations: ["createPublisherSource"])
+  onUpdatePublisherSource(filter: ModelSubscriptionPublisherSourceFilterInput): PublisherSource @aws_subscribe(mutations: ["updatePublisherSource"])
+  onDeletePublisherSource(filter: ModelSubscriptionPublisherSourceFilterInput): PublisherSource @aws_subscribe(mutations: ["deletePublisherSource"])
+  onCreatePublisher(filter: ModelSubscriptionPublisherFilterInput): Publisher @aws_subscribe(mutations: ["createPublisher"])
+  onUpdatePublisher(filter: ModelSubscriptionPublisherFilterInput): Publisher @aws_subscribe(mutations: ["updatePublisher"])
+  onDeletePublisher(filter: ModelSubscriptionPublisherFilterInput): Publisher @aws_subscribe(mutations: ["deletePublisher"])
+  onCreateUser(filter: ModelSubscriptionUserFilterInput): User @aws_subscribe(mutations: ["createUser"])
+  onUpdateUser(filter: ModelSubscriptionUserFilterInput): User @aws_subscribe(mutations: ["updateUser"])
+  onDeleteUser(filter: ModelSubscriptionUserFilterInput): User @aws_subscribe(mutations: ["deleteUser"])
+}
+
+input ResizedPictureInput {
+  original: String!
+  custom: String!
+  small: String!
+  medium: String!
+  large: String!
+}
+
+type ModelPictureConnection {
+  items: [Picture]!
+  nextToken: String
+}
+
+input ModelPictureTypeInput {
+  eq: PictureType
+  ne: PictureType
+}
+
+input ModelPictureFilterInput {
+  id: ModelIDInput
+  type: ModelPictureTypeInput
+  bucket: ModelStringInput
+  key: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelPictureFilterInput]
+  or: [ModelPictureFilterInput]
+  not: ModelPictureFilterInput
+}
+
+input ModelPictureConditionInput {
+  type: ModelPictureTypeInput
+  bucket: ModelStringInput
+  key: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelPictureConditionInput]
+  or: [ModelPictureConditionInput]
+  not: ModelPictureConditionInput
+}
+
+input CreatePictureInput {
+  id: ID
+  type: PictureType!
+  bucket: String!
+  key: String!
+  resized: ResizedPictureInput
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+input UpdatePictureInput {
+  id: ID!
+  type: PictureType
+  bucket: String
+  key: String
+  resized: ResizedPictureInput
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+input DeletePictureInput {
+  id: ID!
+}
+
+input ModelSubscriptionPictureFilterInput {
+  id: ModelSubscriptionIDInput
+  type: ModelSubscriptionStringInput
+  bucket: ModelSubscriptionStringInput
+  key: ModelSubscriptionStringInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionPictureFilterInput]
+  or: [ModelSubscriptionPictureFilterInput]
+}
+
+input NewsItemDataRSSInput {
+  url: String!
+  ampUrl: String
+  categories: [String!]
+  author: String
+  isScraped: Boolean!
+  coverUrl: String
+  contentHtml: String
+  contentText: String
+  contentJson: String
+  wordsCount: Int
+  readingDurationInMilliseconds: Int
+  keywords: [String!]
+  summary: String
+}
+
+input NewsItemDataYouTubeInput {
+  videoId: String!
+  coverUrl: String
+}
+
+input NewsItemDataITunesInput {
+  audioUrl: String!
+  coverUrl: String
+  keywords: [String!]
+  durationFormatted: String
+}
+
+type ModelNewsItemConnection {
+  items: [NewsItem]!
+  nextToken: String
+}
+
+input ModelSourceTypeInput {
+  eq: SourceType
+  ne: SourceType
+}
+
+input ModelNewsItemFilterInput {
+  id: ModelStringInput
+  type: ModelSourceTypeInput
+  title: ModelStringInput
+  description: ModelStringInput
+  publishedAt: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  coverID: ModelIDInput
+  publisherID: ModelIDInput
+  topicID: ModelIDInput
+  creatorID: ModelIDInput
+  and: [ModelNewsItemFilterInput]
+  or: [ModelNewsItemFilterInput]
+  not: ModelNewsItemFilterInput
+}
+
+input ModelNewsItemConditionInput {
+  type: ModelSourceTypeInput
+  title: ModelStringInput
+  description: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  coverID: ModelIDInput
+  publisherID: ModelIDInput
+  topicID: ModelIDInput
+  creatorID: ModelIDInput
+  and: [ModelNewsItemConditionInput]
+  or: [ModelNewsItemConditionInput]
+  not: ModelNewsItemConditionInput
+}
+
+input CreateNewsItemInput {
+  id: String
+  type: SourceType!
+  title: String!
+  description: String!
+  publishedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  coverID: ID
+  publisherID: ID!
+  topicID: ID!
+  creatorID: ID!
+  rss: NewsItemDataRSSInput
+  youtube: NewsItemDataYouTubeInput
+  itunes: NewsItemDataITunesInput
+}
+
+input UpdateNewsItemInput {
+  id: String!
+  type: SourceType
+  title: String
+  description: String
+  publishedAt: AWSDateTime!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  coverID: ID
+  publisherID: ID
+  topicID: ID
+  creatorID: ID
+  rss: NewsItemDataRSSInput
+  youtube: NewsItemDataYouTubeInput
+  itunes: NewsItemDataITunesInput
+}
+
+input DeleteNewsItemInput {
+  id: String!
+  publishedAt: AWSDateTime!
+}
+
+input ModelSubscriptionNewsItemFilterInput {
+  id: ModelSubscriptionStringInput
+  type: ModelSubscriptionStringInput
+  title: ModelSubscriptionStringInput
+  description: ModelSubscriptionStringInput
+  publishedAt: ModelSubscriptionStringInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  coverID: ModelSubscriptionIDInput
+  publisherID: ModelSubscriptionIDInput
+  topicID: ModelSubscriptionIDInput
+  creatorID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionNewsItemFilterInput]
+  or: [ModelSubscriptionNewsItemFilterInput]
+}
+
+input PublisherSourceWebsiteInput {
+  url: String!
+}
+
+input PublisherSourceRSSInput {
+  url: String!
+}
+
+input PublisherSourceYouTubeInput {
+  playlistUrl: String
+  channelID: String!
+  username: String
+}
+
+input PublisherSourceTwitterInput {
+  username: String!
+}
+
+input PublisherSourceITunesInput {
+  url: String!
+}
+
+type ModelPublisherSourceConnection {
+  items: [PublisherSource]!
+  nextToken: String
+}
+
+input ModelPublisherSourceFilterInput {
+  id: ModelIDInput
+  type: ModelStringInput
+  title: ModelStringInput
+  isHidden: ModelBooleanInput
+  publisherTopicID: ModelIDInput
+  publisherID: ModelIDInput
+  creatorID: ModelIDInput
+  and: [ModelPublisherSourceFilterInput]
+  or: [ModelPublisherSourceFilterInput]
+  not: ModelPublisherSourceFilterInput
+}
+
+input ModelPublisherSourceConditionInput {
+  type: ModelStringInput
+  title: ModelStringInput
+  isHidden: ModelBooleanInput
+  publisherTopicID: ModelIDInput
+  publisherID: ModelIDInput
+  creatorID: ModelIDInput
+  and: [ModelPublisherSourceConditionInput]
+  or: [ModelPublisherSourceConditionInput]
+  not: ModelPublisherSourceConditionInput
+}
+
+input CreatePublisherSourceInput {
+  id: ID
+  type: String!
+  title: String
+  isHidden: Boolean!
+  publisherTopicID: ID!
+  publisherID: ID!
+  website: PublisherSourceWebsiteInput
+  rss: PublisherSourceRSSInput
+  youtube: PublisherSourceYouTubeInput
+  twitter: PublisherSourceTwitterInput
+  itunes: PublisherSourceITunesInput
+  creatorID: ID!
+}
+
+input UpdatePublisherSourceInput {
+  id: ID!
+  type: String
+  title: String
+  isHidden: Boolean
+  publisherTopicID: ID
+  publisherID: ID
+  website: PublisherSourceWebsiteInput
+  rss: PublisherSourceRSSInput
+  youtube: PublisherSourceYouTubeInput
+  twitter: PublisherSourceTwitterInput
+  itunes: PublisherSourceITunesInput
+  creatorID: ID
+}
+
+input DeletePublisherSourceInput {
+  id: ID!
+}
+
+input ModelSubscriptionPublisherSourceFilterInput {
+  id: ModelSubscriptionIDInput
+  type: ModelSubscriptionStringInput
+  title: ModelSubscriptionStringInput
+  isHidden: ModelSubscriptionBooleanInput
+  publisherTopicID: ModelSubscriptionIDInput
+  publisherID: ModelSubscriptionIDInput
+  creatorID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionPublisherSourceFilterInput]
+  or: [ModelSubscriptionPublisherSourceFilterInput]
+}
+
+type ModelPublisherConnection {
+  items: [Publisher]!
+  nextToken: String
+}
+
+input ModelPublisherFilterInput {
+  id: ModelIDInput
+  title: ModelStringInput
+  description: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  topicID: ModelIDInput
+  avatarID: ModelIDInput
+  coverID: ModelIDInput
+  creatorID: ModelIDInput
+  and: [ModelPublisherFilterInput]
+  or: [ModelPublisherFilterInput]
+  not: ModelPublisherFilterInput
+}
+
+input ModelPublisherConditionInput {
+  title: ModelStringInput
+  description: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  topicID: ModelIDInput
+  avatarID: ModelIDInput
+  coverID: ModelIDInput
+  creatorID: ModelIDInput
+  and: [ModelPublisherConditionInput]
+  or: [ModelPublisherConditionInput]
+  not: ModelPublisherConditionInput
+}
+
+input CreatePublisherInput {
+  id: ID
+  title: String!
+  description: String!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  topicID: ID!
+  avatarID: ID!
+  coverID: ID
+  creatorID: ID!
+}
+
+input UpdatePublisherInput {
+  id: ID!
+  title: String
+  description: String
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  topicID: ID
+  avatarID: ID
+  coverID: ID
+  creatorID: ID
+}
+
+input DeletePublisherInput {
+  id: ID!
+}
+
+input ModelSubscriptionPublisherFilterInput {
+  id: ModelSubscriptionIDInput
+  title: ModelSubscriptionStringInput
+  description: ModelSubscriptionStringInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  topicID: ModelSubscriptionIDInput
+  avatarID: ModelSubscriptionIDInput
+  coverID: ModelSubscriptionIDInput
+  creatorID: ModelSubscriptionIDInput
+  and: [ModelSubscriptionPublisherFilterInput]
+  or: [ModelSubscriptionPublisherFilterInput]
+}
+
+type ModelUserConnection {
+  items: [User]!
+  nextToken: String
+}
+
+input ModelUserFilterInput {
+  id: ModelIDInput
+  userName: ModelStringInput
+  email: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelUserFilterInput]
+  or: [ModelUserFilterInput]
+  not: ModelUserFilterInput
+}
+
+input ModelUserConditionInput {
+  userName: ModelStringInput
+  email: ModelStringInput
+  createdAt: ModelStringInput
+  updatedAt: ModelStringInput
+  and: [ModelUserConditionInput]
+  or: [ModelUserConditionInput]
+  not: ModelUserConditionInput
+}
+
+input CreateUserInput {
+  id: ID
+  userName: String!
+  email: String!
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+input UpdateUserInput {
+  id: ID!
+  userName: String
+  email: String
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+}
+
+input DeleteUserInput {
+  id: ID!
+}
+
+input ModelSubscriptionUserFilterInput {
+  id: ModelSubscriptionIDInput
+  userName: ModelSubscriptionStringInput
+  email: ModelSubscriptionStringInput
+  createdAt: ModelSubscriptionStringInput
+  updatedAt: ModelSubscriptionStringInput
+  and: [ModelSubscriptionUserFilterInput]
+  or: [ModelSubscriptionUserFilterInput]
+}
+
+input ModelStringKeyConditionInput {
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  between: [String]
+  beginsWith: String
+}
+
+input SearchableStringFilterInput {
+  ne: String
+  gt: String
+  lt: String
+  gte: String
+  lte: String
+  eq: String
+  match: String
+  matchPhrase: String
+  matchPhrasePrefix: String
+  multiMatch: String
+  exists: Boolean
+  wildcard: String
+  regexp: String
+  range: [String]
+}
+
+input SearchableIntFilterInput {
+  ne: Int
+  gt: Int
+  lt: Int
+  gte: Int
+  lte: Int
+  eq: Int
+  range: [Int]
+}
+
+input SearchableFloatFilterInput {
+  ne: Float
+  gt: Float
+  lt: Float
+  gte: Float
+  lte: Float
+  eq: Float
+  range: [Float]
+}
+
+input SearchableBooleanFilterInput {
+  eq: Boolean
+  ne: Boolean
+}
+
+input SearchableIDFilterInput {
+  ne: ID
+  gt: ID
+  lt: ID
+  gte: ID
+  lte: ID
+  eq: ID
+  match: ID
+  matchPhrase: ID
+  matchPhrasePrefix: ID
+  multiMatch: ID
+  exists: Boolean
+  wildcard: ID
+  regexp: ID
+  range: [ID]
+}
+
+input SearchableNewsItemFilterInput {
+  id: SearchableStringFilterInput
+  title: SearchableStringFilterInput
+  description: SearchableStringFilterInput
+  publishedAt: SearchableStringFilterInput
+  createdAt: SearchableStringFilterInput
+  updatedAt: SearchableStringFilterInput
+  coverID: SearchableIDFilterInput
+  publisherID: SearchableIDFilterInput
+  topicID: SearchableIDFilterInput
+  creatorID: SearchableIDFilterInput
+  type: SearchableStringFilterInput
+  and: [SearchableNewsItemFilterInput]
+  or: [SearchableNewsItemFilterInput]
+  not: SearchableNewsItemFilterInput
+}
+
+enum SearchableSortDirection {
+  asc
+  desc
+}
+
+enum SearchableNewsItemSortableFields {
+  id
+  title
+  description
+  publishedAt
+  createdAt
+  updatedAt
+  coverID
+  publisherID
+  topicID
+  creatorID
+}
+
+input SearchableNewsItemSortInput {
+  field: SearchableNewsItemSortableFields
+  direction: SearchableSortDirection
+}
+
+enum SearchableAggregateType {
+  terms
+  avg
+  min
+  max
+  sum
+}
+
+enum SearchableNewsItemAggregateField {
+  id
+  type
+  title
+  description
+  publishedAt
+  createdAt
+  updatedAt
+  coverID
+  publisherID
+  topicID
+  creatorID
+}
+
+input SearchableNewsItemAggregationInput {
+  name: String!
+  type: SearchableAggregateType!
+  field: SearchableNewsItemAggregateField!
+}

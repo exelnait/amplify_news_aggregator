@@ -8,7 +8,6 @@ var axios$1 = require('axios');
 var clientDynamodb = require('@aws-sdk/client-dynamodb');
 var utilDynamodb = require('@aws-sdk/util-dynamodb');
 var RSSFeedParser = require('rss-parser');
-var xml2js = require('xml2js');
 var clientLambda = require('@aws-sdk/client-lambda');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
@@ -53,13 +52,6 @@ var SourceType;
     SourceType["ITUNES"] = "ITUNES";
     SourceType["WEBSITE"] = "WEBSITE";
 })(SourceType || (SourceType = {}));
-var TopicType;
-(function (TopicType) {
-    TopicType["GAMING"] = "GAMING";
-    TopicType["TECH"] = "TECH";
-    TopicType["DEV"] = "DEV";
-    TopicType["CUSTOM"] = "CUSTOM";
-})(TopicType || (TopicType = {}));
 var PictureType;
 (function (PictureType) {
     PictureType["AVATAR"] = "AVATAR";
@@ -89,7 +81,7 @@ var SearchableNewsItemSortableFields;
     SearchableNewsItemSortableFields["coverID"] = "coverID";
     SearchableNewsItemSortableFields["publisherID"] = "publisherID";
     SearchableNewsItemSortableFields["topicID"] = "topicID";
-    SearchableNewsItemSortableFields["viewsCount"] = "viewsCount";
+    SearchableNewsItemSortableFields["creatorID"] = "creatorID";
 })(SearchableNewsItemSortableFields || (SearchableNewsItemSortableFields = {}));
 var SearchableSortDirection;
 (function (SearchableSortDirection) {
@@ -116,7 +108,7 @@ var SearchableNewsItemAggregateField;
     SearchableNewsItemAggregateField["coverID"] = "coverID";
     SearchableNewsItemAggregateField["publisherID"] = "publisherID";
     SearchableNewsItemAggregateField["topicID"] = "topicID";
-    SearchableNewsItemAggregateField["viewsCount"] = "viewsCount";
+    SearchableNewsItemAggregateField["creatorID"] = "creatorID";
 })(SearchableNewsItemAggregateField || (SearchableNewsItemAggregateField = {}));
 var ModelSortDirection;
 (function (ModelSortDirection) {
@@ -161,16 +153,25 @@ const marshallOptions = {
     // Whether to convert typeof object to map attribute.
     convertClassInstanceToMap: false, // false, by default.
 };
+const unmarshallOptions = {
+    // Whether to return numbers as a string instead of converting them to native JavaScript numbers.
+    wrapNumbers: false, // false, by default.
+};
 const docClient = new clientDynamodb.DynamoDBClient({});
 const TABLES = {
     User: process.env.API_NEWSAGGREGATOR_USERTABLE_NAME,
-    UserPublisherSubscription: process.env.API_NEWSAGGREGATOR_USERPUBLISHERSUBSCRIPTIONTABLE_NAME,
     Publisher: process.env.API_NEWSAGGREGATOR_PUBLISHERTABLE_NAME,
     Picture: process.env.API_NEWSAGGREGATOR_PICTURETABLE_NAME,
     PublisherSource: process.env.API_NEWSAGGREGATOR_PUBLISHERSOURCETABLE_NAME,
     NewsItem: process.env.API_NEWSAGGREGATOR_NEWSITEMTABLE_NAME,
 };
 console.log(TABLES);
+function scanItems(params) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const data = yield docClient.send(new clientDynamodb.ScanCommand(params));
+        return data.Items.map((item) => utilDynamodb.unmarshall(item, unmarshallOptions));
+    });
+}
 function createPutItemCommandParams(input, type, additionalParams = {}) {
     const item = Object.assign(Object.assign({ __typename: type, id: input.id || crypto.randomUUID() }, input), { createdAt: new Date().toISOString(), updatedAt: input.updatedAt || new Date().toISOString() });
     return Object.assign(Object.assign({}, additionalParams), { Item: utilDynamodb.marshall(item, marshallOptions) });
@@ -184,26 +185,26 @@ function putItem(tableName, input, type, additionalParams = {}) {
     });
 }
 function putItemBatch(tableName, inputs, type, additionalParams = {}) {
-    const items = inputs.map(input => createPutItemCommandParams(input, type, additionalParams));
+    const items = inputs.map((input) => createPutItemCommandParams(input, type, additionalParams));
     return batchWriteAll({
         RequestItems: {
-            [tableName]: items.map(item => ({
-                PutRequest: item
-            }))
-        }
-    }).then(() => items.map(item => item.Item));
+            [tableName]: items.map((item) => ({
+                PutRequest: item,
+            })),
+        },
+    }).then(() => items.map((item) => item.Item));
 }
 const batchWriteAll = (params) => {
     const batchSize = 15;
     let rawItems = [];
     Object.entries(params.RequestItems).forEach(([t, tv]) => {
-        tv.forEach(o => {
+        tv.forEach((o) => {
             const operation = Object.keys(o)[0];
             const itemKey = operation === 'DeleteRequest' ? 'Key' : 'Item';
             rawItems.push({
                 TableName: t,
                 operation,
-                [itemKey]: o[operation][itemKey]
+                [itemKey]: o[operation][itemKey],
             });
         });
     });
@@ -213,13 +214,15 @@ const batchWriteAll = (params) => {
         }
         return acc;
     }, []);
-    return Promise.all(batchesArray.map(b => {
+    return Promise.all(batchesArray.map((b) => {
         let currentParams = {};
-        b.forEach(i => {
+        b.forEach((i) => {
             const itemKey = i.operation === 'DeleteRequest' ? 'Key' : 'Item';
             if (!currentParams[i.TableName])
                 currentParams[i.TableName] = [];
-            currentParams[i.TableName].push({ [i.operation]: { [itemKey]: i[itemKey] } });
+            currentParams[i.TableName].push({
+                [i.operation]: { [itemKey]: i[itemKey] },
+            });
         });
         return docClient.send(new clientDynamodb.BatchWriteItemCommand({ RequestItems: currentParams }));
     }));
@@ -241,27 +244,6 @@ function parseRssFeed(url) {
     const parser = new RSSFeedParser__default["default"]();
     return parser.parseURL(url).then((feed) => {
         return feed;
-    });
-}
-
-function parseYouTubeXMLFeed(youtubeChannelId) {
-    const url = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + youtubeChannelId;
-    return axios__default["default"]({
-        method: 'get',
-        url
-    }).then((response) => {
-        if (response.status == 200) {
-            return new Promise((resolve, reject) => {
-                xml2js.parseString(response.data, (err, result) => {
-                    if (err) {
-                        reject(err);
-                    }
-                    else {
-                        resolve(result['feed']);
-                    }
-                });
-            });
-        }
     });
 }
 
@@ -304,15 +286,37 @@ const domain = `https://www.googleapis.com/youtube/v3/`;
 if (APIKey === undefined) {
     throw new Error('YOUTUBE_API_KEY not defined');
 }
-function getChannelIdByUsername(username) {
-    console.log(APIKey);
-    const url = `${domain}channels?part=id&forUsername=${username}&key=${APIKey}`;
+function getChannelInfoByUsername(username) {
+    var url = `${domain}search?part=snippet&maxResults=1&q=${username}&type=channel&key=${APIKey}`;
     return axios.get(url).then(result => {
         var _a;
+        console.log(result.data);
         try {
             const item = (_a = result.data) === null || _a === void 0 ? void 0 : _a.items[0];
             if (item != null) {
-                return item.id;
+                return item.snippet;
+            }
+            else {
+                return null;
+            }
+        }
+        catch (e) {
+            console.log('YouTubeAPI Response Parsing Error', e);
+        }
+        return null;
+    }).catch(e => {
+        console.log('YouTubeAPI Error', e);
+    });
+}
+function getChannelInfoById(id) {
+    var url = `${domain}channels?part=snippet%2CbrandingSettings&id=${id}&key=${APIKey}`;
+    return axios.get(url).then(result => {
+        var _a;
+        console.log(result.data);
+        try {
+            const item = (_a = result.data) === null || _a === void 0 ? void 0 : _a.items[0];
+            if (item != null) {
+                return item.snippet;
             }
             else {
                 return null;
@@ -327,10 +331,37 @@ function getChannelIdByUsername(username) {
     });
 }
 
+function getUserEmailFromEventIdentity(event) {
+    var _a;
+    event.identity;
+    return (_a = event.identity.claims) === null || _a === void 0 ? void 0 : _a.email;
+}
+function getUserByEmail(email) {
+    return scanItems({
+        TableName: TABLES.User,
+        ExpressionAttributeValues: {
+            ':email': {
+                S: email,
+            },
+        },
+        FilterExpression: 'email = :email',
+    }).then((data) => {
+        if (data.length === 0) {
+            throw new Error(`Unable to find user with email: ${email}`);
+        }
+        else {
+            return data[0];
+        }
+    });
+}
+
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`EVENT: ${JSON.stringify(event, null, 2)}`);
     try {
-        let { title, description, avatarUrl, coverUrl, topicID, websiteUrl, sources } = event.arguments.input;
+        const userEmail = getUserEmailFromEventIdentity(event);
+        const currentUser = yield getUserByEmail(userEmail);
+        const currentUserID = currentUser.id;
+        let { title, description, avatarUrl, coverUrl, topicID, websiteUrl, sources, } = event.arguments.input;
         const publisherId = crypto.randomUUID();
         const sourceInputs = yield Promise.all(sources.map((source) => __awaiter(void 0, void 0, void 0, function* () {
             let title = null;
@@ -341,11 +372,23 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
                     break;
                 }
                 case SourceType.YOUTUBE: {
-                    if (source.youtube.username && !source.youtube.channelID) {
-                        source.youtube.channelID = yield getChannelIdByUsername(source.youtube.username);
+                    let channelInfo;
+                    if (source.youtube.url) {
+                        if (source.youtube.url.includes('channel')) {
+                            source.youtube.channelID =
+                                source.youtube.url.split('channel/')[1];
+                            channelInfo = yield getChannelInfoById(source.youtube.channelID);
+                        }
+                        else {
+                            source.youtube.username = source.youtube.url
+                                .split('youtube.com/')[1]
+                                .replace('@', '');
+                            channelInfo = yield getChannelInfoByUsername(source.youtube.username);
+                            source.youtube.channelID = channelInfo.channelId;
+                        }
                     }
-                    const feed = yield parseYouTubeXMLFeed(source.youtube.channelID);
-                    title = feed.title[0];
+                    avatarUrl = channelInfo.thumbnails.default.url;
+                    title = channelInfo.title;
                     break;
                 }
                 case SourceType.ITUNES: {
@@ -370,10 +413,11 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
                 type: SourceType.WEBSITE,
                 publisherID: publisherId,
                 publisherTopicID: topicID,
+                creatorID: currentUserID,
                 isHidden: false,
                 website: {
-                    url: websiteUrl
-                }
+                    url: websiteUrl,
+                },
             });
         }
         const avatarFile = yield saveFileByUrl({
@@ -383,7 +427,7 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
         const avatarPicture = yield createPicture({
             type: PictureType.AVATAR,
             bucket: avatarFile.bucket,
-            key: avatarFile.key
+            key: avatarFile.key,
         });
         let coverPicture = null;
         if (coverUrl) {
@@ -394,7 +438,7 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
             coverPicture = yield createPicture({
                 type: PictureType.COVER,
                 bucket: coverFile.bucket,
-                key: coverFile.key
+                key: coverFile.key,
             });
         }
         const createdPublisher = yield createPublisher({
@@ -402,8 +446,9 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
             title,
             description,
             topicID: topicID,
+            creatorID: currentUserID,
             avatarID: avatarPicture.id,
-            coverID: coverPicture === null || coverPicture === void 0 ? void 0 : coverPicture.id
+            coverID: coverPicture === null || coverPicture === void 0 ? void 0 : coverPicture.id,
         });
         yield createPublisherSources(sourceInputs);
         yield aggregateAllNewsItemsForPublisher(createdPublisher.id);

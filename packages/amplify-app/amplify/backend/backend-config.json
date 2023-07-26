@@ -1,17 +1,32 @@
 {
   "api": {
     "newsaggregator": {
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "newsaggregator877980c6"
+        }
+      ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [],
+          "additionalAuthenticationProviders": [
+            {
+              "apiKeyConfig": {
+                "apiKeyExpirationDate": "2024-07-25T18:28:55.481Z",
+                "apiKeyExpirationDays": 365,
+                "description": ""
+              },
+              "authenticationType": "API_KEY"
+            }
+          ],
           "defaultAuthentication": {
-            "apiKeyConfig": {
-              "apiKeyExpirationDate": "2024-07-24T10:37:38.027Z",
-              "apiKeyExpirationDays": 365,
-              "description": ""
-            },
-            "authenticationType": "API_KEY"
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authnewsaggregator877980c6"
+            }
           }
         }
       },
@@ -22,7 +37,17 @@
   "auth": {
     "newsaggregator877980c6": {
       "customAuth": false,
-      "dependsOn": [],
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn",
+            "Name"
+          ],
+          "category": "function",
+          "resourceName": "newsaggregator877980c6PostConfirmation",
+          "triggerProvider": "Cognito"
+        }
+      ],
       "frontendAuthConfig": {
         "mfaConfiguration": "OFF",
         "mfaTypes": [
@@ -35,7 +60,9 @@
         "signupAttributes": [
           "EMAIL"
         ],
-        "socialProviders": [],
+        "socialProviders": [
+          "GOOGLE"
+        ],
         "usernameAttributes": [
           "EMAIL"
         ],
@@ -222,13 +249,49 @@
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "NewsAggregatorMyUser": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "NewsAggregatorPropertyResizedPicture": {
       "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "newsaggregator877980c6PostConfirmation": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "GraphQLAPIIdOutput"
+          ],
+          "category": "api",
+          "resourceName": "newsaggregator"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "parameters": {
+    "AMPLIFY_auth_newsaggregator877980c6_googleClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "newsaggregator877980c6"
+        }
+      ]
+    },
     "AMPLIFY_function_NewsAggregatorAggregateITunesFeed_deploymentBucketName": {
       "usedBy": [
         {
@@ -357,6 +420,22 @@
         }
       ]
     },
+    "AMPLIFY_function_NewsAggregatorMyUser_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorMyUser"
+        }
+      ]
+    },
+    "AMPLIFY_function_NewsAggregatorMyUser_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "NewsAggregatorMyUser"
+        }
+      ]
+    },
     "AMPLIFY_function_NewsAggregatorPropertyResizedPicture_cdnUrl": {
       "usedBy": [
         {
@@ -378,6 +457,22 @@
         {
           "category": "function",
           "resourceName": "NewsAggregatorPropertyResizedPicture"
+        }
+      ]
+    },
+    "AMPLIFY_function_newsaggregator877980c6PostConfirmation_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "newsaggregator877980c6PostConfirmation"
+        }
+      ]
+    },
+    "AMPLIFY_function_newsaggregator877980c6PostConfirmation_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "newsaggregator877980c6PostConfirmation"
         }
       ]
     }

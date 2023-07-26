@@ -2,6 +2,64 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const myUser = /* GraphQL */ `
+  query MyUser {
+    myUser {
+      id
+      userName
+      email
+      createdAt
+      updatedAt
+      publishers {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          topicID
+          avatarID
+          coverID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      topics {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      news {
+        items {
+          id
+          type
+          title
+          description
+          publishedAt
+          createdAt
+          updatedAt
+          coverID
+          publisherID
+          topicID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      __typename
+    }
+  }
+`;
 export const getNewsItemRSS = /* GraphQL */ `
   query GetNewsItemRSS($input: GetNewsItemRSSInput!) {
     getNewsItemRSS(input: $input) {
@@ -41,10 +99,9 @@ export const getNewsItemRSS = /* GraphQL */ `
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
         sources {
@@ -75,14 +132,13 @@ export const getNewsItemRSS = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       topicID
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -93,8 +149,10 @@ export const getNewsItemRSS = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
+      creatorID
       rss {
         url
         ampUrl
@@ -123,7 +181,6 @@ export const getNewsItemRSS = /* GraphQL */ `
         durationFormatted
         __typename
       }
-      viewsCount
       __typename
     }
   }
@@ -173,18 +230,19 @@ export const searchNewsItems = /* GraphQL */ `
           topicID
           avatarID
           coverID
+          creatorID
           __typename
         }
         topicID
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
+        creatorID
         rss {
           url
           ampUrl
@@ -213,7 +271,6 @@ export const searchNewsItems = /* GraphQL */ `
           durationFormatted
           __typename
         }
-        viewsCount
         __typename
       }
       nextToken
@@ -243,8 +300,6 @@ export const getTopic = /* GraphQL */ `
     getTopic(id: $id) {
       id
       title
-      description
-      type
       createdAt
       updatedAt
       publishers {
@@ -257,6 +312,7 @@ export const getTopic = /* GraphQL */ `
           topicID
           avatarID
           coverID
+          creatorID
           __typename
         }
         nextToken
@@ -274,12 +330,13 @@ export const getTopic = /* GraphQL */ `
           coverID
           publisherID
           topicID
-          viewsCount
+          creatorID
           __typename
         }
         nextToken
         __typename
       }
+      creatorID
       __typename
     }
   }
@@ -294,8 +351,6 @@ export const listTopics = /* GraphQL */ `
       items {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -306,6 +361,7 @@ export const listTopics = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       nextToken
@@ -402,10 +458,9 @@ export const getNewsItem = /* GraphQL */ `
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
         sources {
@@ -436,14 +491,13 @@ export const getNewsItem = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       topicID
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -454,8 +508,10 @@ export const getNewsItem = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
+      creatorID
       rss {
         url
         ampUrl
@@ -484,7 +540,6 @@ export const getNewsItem = /* GraphQL */ `
         durationFormatted
         __typename
       }
-      viewsCount
       __typename
     }
   }
@@ -534,18 +589,19 @@ export const listNewsItems = /* GraphQL */ `
           topicID
           avatarID
           coverID
+          creatorID
           __typename
         }
         topicID
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
+        creatorID
         rss {
           url
           ampUrl
@@ -574,7 +630,6 @@ export const listNewsItems = /* GraphQL */ `
           durationFormatted
           __typename
         }
-        viewsCount
         __typename
       }
       nextToken
@@ -613,6 +668,7 @@ export const getPublisherSource = /* GraphQL */ `
         url
         __typename
       }
+      creatorID
       createdAt
       updatedAt
       __typename
@@ -659,6 +715,7 @@ export const listPublisherSources = /* GraphQL */ `
           url
           __typename
         }
+        creatorID
         createdAt
         updatedAt
         __typename
@@ -680,8 +737,6 @@ export const getPublisher = /* GraphQL */ `
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -692,6 +747,7 @@ export const getPublisher = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       sources {
@@ -702,6 +758,7 @@ export const getPublisher = /* GraphQL */ `
           isHidden
           publisherTopicID
           publisherID
+          creatorID
           createdAt
           updatedAt
           __typename
@@ -757,12 +814,13 @@ export const getPublisher = /* GraphQL */ `
           coverID
           publisherID
           topicID
-          viewsCount
+          creatorID
           __typename
         }
         nextToken
         __typename
       }
+      creatorID
       __typename
     }
   }
@@ -784,10 +842,9 @@ export const listPublishers = /* GraphQL */ `
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
         sources {
@@ -818,6 +875,7 @@ export const listPublishers = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       nextToken
@@ -833,6 +891,52 @@ export const getUser = /* GraphQL */ `
       email
       createdAt
       updatedAt
+      publishers {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          topicID
+          avatarID
+          coverID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      topics {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      news {
+        items {
+          id
+          type
+          title
+          description
+          publishedAt
+          createdAt
+          updatedAt
+          coverID
+          publisherID
+          topicID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
       __typename
     }
   }
@@ -850,6 +954,54 @@ export const listUsers = /* GraphQL */ `
         email
         createdAt
         updatedAt
+        publishers {
+          nextToken
+          __typename
+        }
+        topics {
+          nextToken
+          __typename
+        }
+        news {
+          nextToken
+          __typename
+        }
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const topicsByCreatorID = /* GraphQL */ `
+  query TopicsByCreatorID(
+    $creatorID: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelTopicFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    topicsByCreatorID(
+      creatorID: $creatorID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        title
+        createdAt
+        updatedAt
+        publishers {
+          nextToken
+          __typename
+        }
+        news {
+          nextToken
+          __typename
+        }
+        creatorID
         __typename
       }
       nextToken
@@ -902,18 +1054,19 @@ export const newsItemsByPublisherIDAndPublishedAt = /* GraphQL */ `
           topicID
           avatarID
           coverID
+          creatorID
           __typename
         }
         topicID
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
+        creatorID
         rss {
           url
           ampUrl
@@ -942,7 +1095,6 @@ export const newsItemsByPublisherIDAndPublishedAt = /* GraphQL */ `
           durationFormatted
           __typename
         }
-        viewsCount
         __typename
       }
       nextToken
@@ -995,18 +1147,19 @@ export const newsItemsByTopicIDAndPublishedAt = /* GraphQL */ `
           topicID
           avatarID
           coverID
+          creatorID
           __typename
         }
         topicID
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
+        creatorID
         rss {
           url
           ampUrl
@@ -1035,7 +1188,99 @@ export const newsItemsByTopicIDAndPublishedAt = /* GraphQL */ `
           durationFormatted
           __typename
         }
-        viewsCount
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const newsItemsByCreatorIDAndPublishedAt = /* GraphQL */ `
+  query NewsItemsByCreatorIDAndPublishedAt(
+    $creatorID: ID!
+    $publishedAt: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelNewsItemFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    newsItemsByCreatorIDAndPublishedAt(
+      creatorID: $creatorID
+      publishedAt: $publishedAt
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        type
+        title
+        description
+        publishedAt
+        createdAt
+        updatedAt
+        coverID
+        cover {
+          id
+          type
+          bucket
+          key
+          createdAt
+          updatedAt
+          __typename
+        }
+        publisherID
+        publisher {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          topicID
+          avatarID
+          coverID
+          creatorID
+          __typename
+        }
+        topicID
+        topic {
+          id
+          title
+          createdAt
+          updatedAt
+          creatorID
+          __typename
+        }
+        creatorID
+        rss {
+          url
+          ampUrl
+          categories
+          author
+          isScraped
+          coverUrl
+          contentHtml
+          contentText
+          contentJson
+          wordsCount
+          readingDurationInMilliseconds
+          keywords
+          summary
+          __typename
+        }
+        youtube {
+          videoId
+          coverUrl
+          __typename
+        }
+        itunes {
+          audioUrl
+          coverUrl
+          keywords
+          durationFormatted
+          __typename
+        }
         __typename
       }
       nextToken
@@ -1087,6 +1332,7 @@ export const publisherSourcesByType = /* GraphQL */ `
           url
           __typename
         }
+        creatorID
         createdAt
         updatedAt
         __typename
@@ -1140,6 +1386,7 @@ export const publisherSourcesByPublisherTopicID = /* GraphQL */ `
           url
           __typename
         }
+        creatorID
         createdAt
         updatedAt
         __typename
@@ -1195,6 +1442,61 @@ export const publisherSourcesByPublisherIDAndType = /* GraphQL */ `
           url
           __typename
         }
+        creatorID
+        createdAt
+        updatedAt
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const publisherSourcesByCreatorID = /* GraphQL */ `
+  query PublisherSourcesByCreatorID(
+    $creatorID: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelPublisherSourceFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    publisherSourcesByCreatorID(
+      creatorID: $creatorID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        type
+        title
+        isHidden
+        publisherTopicID
+        publisherID
+        website {
+          url
+          __typename
+        }
+        rss {
+          url
+          __typename
+        }
+        youtube {
+          playlistUrl
+          channelID
+          username
+          __typename
+        }
+        twitter {
+          username
+          __typename
+        }
+        itunes {
+          url
+          __typename
+        }
+        creatorID
         createdAt
         updatedAt
         __typename
@@ -1229,10 +1531,9 @@ export const publishersByTopicID = /* GraphQL */ `
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
         sources {
@@ -1263,6 +1564,73 @@ export const publishersByTopicID = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
+        __typename
+      }
+      nextToken
+      __typename
+    }
+  }
+`;
+export const publishersByCreatorID = /* GraphQL */ `
+  query PublishersByCreatorID(
+    $creatorID: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelPublisherFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    publishersByCreatorID(
+      creatorID: $creatorID
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        title
+        description
+        createdAt
+        updatedAt
+        topicID
+        topic {
+          id
+          title
+          createdAt
+          updatedAt
+          creatorID
+          __typename
+        }
+        sources {
+          nextToken
+          __typename
+        }
+        avatarID
+        avatar {
+          id
+          type
+          bucket
+          key
+          createdAt
+          updatedAt
+          __typename
+        }
+        coverID
+        cover {
+          id
+          type
+          bucket
+          key
+          createdAt
+          updatedAt
+          __typename
+        }
+        news {
+          nextToken
+          __typename
+        }
+        creatorID
         __typename
       }
       nextToken
@@ -1291,6 +1659,18 @@ export const getUserByUserName = /* GraphQL */ `
         email
         createdAt
         updatedAt
+        publishers {
+          nextToken
+          __typename
+        }
+        topics {
+          nextToken
+          __typename
+        }
+        news {
+          nextToken
+          __typename
+        }
         __typename
       }
       nextToken

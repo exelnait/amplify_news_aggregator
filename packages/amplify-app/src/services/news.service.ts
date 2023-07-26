@@ -18,17 +18,19 @@ export async function normalizeNewsItemFromRSS(item: NewsItem, options: Normaliz
 }): Promise<NewsItem> {
     try {
         const startTime = performance.now();
-        const [scrapedArticle, parsedArticle] = await Promise.all([
-            scrapArticle(item.rss.url),
-            parseArticle(item.rss.url)
-        ]);
+        // const [scrapedArticle, parsedArticle] = await Promise.all([
+        //     scrapArticle(item.rss.url),
+        //     parseArticle(item.rss.url)
+        // ]);
+        const scrapedArticle = null;
+        const parsedArticle = await  parseArticle(item.rss.url);
         const parsingTime = performance.now();
         console.log(`Parsing time: ${parsingTime - startTime}ms`);
 
         // console.log('scrapedArticle', JSON.stringify(scrapedArticle, null, 2));
         // console.log('parsedArticle', JSON.stringify(parsedArticle, null, 2));
 
-        const coverUrl = parsedArticle.lead_image_url || scrapedArticle.top_image;
+        const coverUrl = parsedArticle.lead_image_url || scrapedArticle?.top_image;
         if (!item.coverID && coverUrl) {
             item.rss.coverUrl = coverUrl;
             item.coverID = randomUUID(); // S3 cover creation should be later
@@ -42,7 +44,7 @@ export async function normalizeNewsItemFromRSS(item: NewsItem, options: Normaliz
         });
         item.rss.contentHtml = normalizedHtml
         item.rss.contentJson = JSON.stringify(htmlJson);
-        item.rss.contentText = scrapedArticle.text || parsedArticle.content ? convertHtmlToText(normalizedHtml) : null;
+        item.rss.contentText = scrapedArticle?.text || parsedArticle.content ? convertHtmlToText(normalizedHtml) : null;
         item.rss.isScraped = true;
         console.log(`Normalize content time: ${normalizeContentTime - parsingTime}ms`);
 
@@ -50,8 +52,8 @@ export async function normalizeNewsItemFromRSS(item: NewsItem, options: Normaliz
         item.rss.readingDurationInMilliseconds = parsedArticle.word_count ? calculateReadingTimeInMillisecondsByWordsCount(parsedArticle.word_count) : 0;
 
         //NLP
-        item.rss.keywords = scrapedArticle.keywords
-        item.rss.summary = scrapedArticle.summary
+        // item.rss.keywords = scrapedArticle.keywords
+        // item.rss.summary = scrapedArticle.summary
 
         console.log(`Normalize news item time: ${performance.now() - startTime}ms`);
         return item;

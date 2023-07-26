@@ -1,0 +1,24 @@
+{
+  "trigger": true,
+  "modules": [
+    "custom"
+  ],
+  "parentResource": "newsaggregator877980c6",
+  "functionName": "newsaggregator877980c6PostConfirmation",
+  "resourceName": "newsaggregator877980c6PostConfirmation",
+  "parentStack": "auth",
+  "triggerEnvs": "[]",
+  "triggerDir": "/snapshot/repo/build/node_modules/@aws-amplify/amplify-category-auth/provider-utils/awscloudformation/triggers/PostConfirmation",
+  "triggerTemplate": "PostConfirmation.json.ejs",
+  "triggerEventPath": "PostConfirmation.event.json",
+  "roleName": "newsaggregator877980c6PostConfirmation",
+  "skipEdit": true,
+  "permissions": {
+    "storage": {
+      "User:@model(appsync)": [
+        "create",
+        "update"
+      ]
+    }
+  }
+}

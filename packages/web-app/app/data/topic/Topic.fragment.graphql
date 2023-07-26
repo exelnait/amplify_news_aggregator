@@ -1,0 +1,4 @@
+fragment BaseTopic on Topic {
+    id
+    title
+}

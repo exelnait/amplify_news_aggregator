@@ -51,7 +51,6 @@ const unmarshallOptions = {
 const docClient = new clientDynamodb.DynamoDBClient({});
 const TABLES = {
     User: process.env.API_NEWSAGGREGATOR_USERTABLE_NAME,
-    UserPublisherSubscription: process.env.API_NEWSAGGREGATOR_USERPUBLISHERSUBSCRIPTIONTABLE_NAME,
     Publisher: process.env.API_NEWSAGGREGATOR_PUBLISHERTABLE_NAME,
     Picture: process.env.API_NEWSAGGREGATOR_PICTURETABLE_NAME,
     PublisherSource: process.env.API_NEWSAGGREGATOR_PUBLISHERSOURCETABLE_NAME,
@@ -61,7 +60,7 @@ console.log(TABLES);
 function queryItems(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const data = yield docClient.send(new clientDynamodb.QueryCommand(params));
-        return data.Items.map(item => utilDynamodb.unmarshall(item, unmarshallOptions));
+        return data.Items.map((item) => utilDynamodb.unmarshall(item, unmarshallOptions));
     });
 }
 function createPutItemCommandParams(input, type, additionalParams = {}) {
@@ -69,14 +68,14 @@ function createPutItemCommandParams(input, type, additionalParams = {}) {
     return Object.assign(Object.assign({}, additionalParams), { Item: utilDynamodb.marshall(item, marshallOptions) });
 }
 function putItemBatch(tableName, inputs, type, additionalParams = {}) {
-    const items = inputs.map(input => createPutItemCommandParams(input, type, additionalParams));
+    const items = inputs.map((input) => createPutItemCommandParams(input, type, additionalParams));
     return batchWriteAll({
         RequestItems: {
-            [tableName]: items.map(item => ({
-                PutRequest: item
-            }))
-        }
-    }).then(() => items.map(item => item.Item));
+            [tableName]: items.map((item) => ({
+                PutRequest: item,
+            })),
+        },
+    }).then(() => items.map((item) => item.Item));
 }
 function putItemBatchUnique(tableName, inputs, type, conditionKey) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -89,13 +88,13 @@ const batchWriteAll = (params) => {
     const batchSize = 15;
     let rawItems = [];
     Object.entries(params.RequestItems).forEach(([t, tv]) => {
-        tv.forEach(o => {
+        tv.forEach((o) => {
             const operation = Object.keys(o)[0];
             const itemKey = operation === 'DeleteRequest' ? 'Key' : 'Item';
             rawItems.push({
                 TableName: t,
                 operation,
-                [itemKey]: o[operation][itemKey]
+                [itemKey]: o[operation][itemKey],
             });
         });
     });
@@ -105,13 +104,15 @@ const batchWriteAll = (params) => {
         }
         return acc;
     }, []);
-    return Promise.all(batchesArray.map(b => {
+    return Promise.all(batchesArray.map((b) => {
         let currentParams = {};
-        b.forEach(i => {
+        b.forEach((i) => {
             const itemKey = i.operation === 'DeleteRequest' ? 'Key' : 'Item';
             if (!currentParams[i.TableName])
                 currentParams[i.TableName] = [];
-            currentParams[i.TableName].push({ [i.operation]: { [itemKey]: i[itemKey] } });
+            currentParams[i.TableName].push({
+                [i.operation]: { [itemKey]: i[itemKey] },
+            });
         });
         return docClient.send(new clientDynamodb.BatchWriteItemCommand({ RequestItems: currentParams }));
     }));
@@ -167,13 +168,6 @@ var SourceType;
     SourceType["ITUNES"] = "ITUNES";
     SourceType["WEBSITE"] = "WEBSITE";
 })(SourceType || (SourceType = {}));
-var TopicType;
-(function (TopicType) {
-    TopicType["GAMING"] = "GAMING";
-    TopicType["TECH"] = "TECH";
-    TopicType["DEV"] = "DEV";
-    TopicType["CUSTOM"] = "CUSTOM";
-})(TopicType || (TopicType = {}));
 var PictureType;
 (function (PictureType) {
     PictureType["AVATAR"] = "AVATAR";
@@ -192,6 +186,11 @@ var ModelAttributeTypes;
     ModelAttributeTypes["stringSet"] = "stringSet";
     ModelAttributeTypes["_null"] = "_null";
 })(ModelAttributeTypes || (ModelAttributeTypes = {}));
+var ModelSortDirection;
+(function (ModelSortDirection) {
+    ModelSortDirection["ASC"] = "ASC";
+    ModelSortDirection["DESC"] = "DESC";
+})(ModelSortDirection || (ModelSortDirection = {}));
 var SearchableNewsItemSortableFields;
 (function (SearchableNewsItemSortableFields) {
     SearchableNewsItemSortableFields["id"] = "id";
@@ -203,7 +202,7 @@ var SearchableNewsItemSortableFields;
     SearchableNewsItemSortableFields["coverID"] = "coverID";
     SearchableNewsItemSortableFields["publisherID"] = "publisherID";
     SearchableNewsItemSortableFields["topicID"] = "topicID";
-    SearchableNewsItemSortableFields["viewsCount"] = "viewsCount";
+    SearchableNewsItemSortableFields["creatorID"] = "creatorID";
 })(SearchableNewsItemSortableFields || (SearchableNewsItemSortableFields = {}));
 var SearchableSortDirection;
 (function (SearchableSortDirection) {
@@ -230,13 +229,8 @@ var SearchableNewsItemAggregateField;
     SearchableNewsItemAggregateField["coverID"] = "coverID";
     SearchableNewsItemAggregateField["publisherID"] = "publisherID";
     SearchableNewsItemAggregateField["topicID"] = "topicID";
-    SearchableNewsItemAggregateField["viewsCount"] = "viewsCount";
+    SearchableNewsItemAggregateField["creatorID"] = "creatorID";
 })(SearchableNewsItemAggregateField || (SearchableNewsItemAggregateField = {}));
-var ModelSortDirection;
-(function (ModelSortDirection) {
-    ModelSortDirection["ASC"] = "ASC";
-    ModelSortDirection["DESC"] = "DESC";
-})(ModelSortDirection || (ModelSortDirection = {}));
 
 class NewsItemRSS {
     constructor(data) {
@@ -247,6 +241,7 @@ class NewsItemRSS {
             title: item.title,
             description: item.contentSnippet,
             publisherId: source.publisherID,
+            creatorId: source.creatorID,
             topicId: source.publisherTopicID,
             publishedDate: item.isoDate,
             url: item.link,
@@ -255,9 +250,9 @@ class NewsItemRSS {
         });
     }
     toInput() {
-        const { title, description, publisherId, topicId, url, categories, author, publishedDate } = this.data;
+        const { title, description, publisherId, creatorId, topicId, url, categories, author, publishedDate, } = this.data;
         return {
-            id: crypto.createHash('md5').update(url).digest("hex"),
+            id: crypto.createHash('md5').update(url).digest('hex'),
             title,
             description,
             type: SourceType.RSS,
@@ -270,7 +265,7 @@ class NewsItemRSS {
                 categories,
                 author,
             },
-            viewsCount: 0,
+            creatorID: creatorId,
         };
     }
 }

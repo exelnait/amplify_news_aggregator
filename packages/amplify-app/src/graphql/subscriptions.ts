@@ -7,8 +7,6 @@ export const onCreateTopic = /* GraphQL */ `
     onCreateTopic(filter: $filter) {
       id
       title
-      description
-      type
       createdAt
       updatedAt
       publishers {
@@ -21,6 +19,7 @@ export const onCreateTopic = /* GraphQL */ `
           topicID
           avatarID
           coverID
+          creatorID
           __typename
         }
         nextToken
@@ -38,12 +37,13 @@ export const onCreateTopic = /* GraphQL */ `
           coverID
           publisherID
           topicID
-          viewsCount
+          creatorID
           __typename
         }
         nextToken
         __typename
       }
+      creatorID
       __typename
     }
   }
@@ -53,8 +53,6 @@ export const onUpdateTopic = /* GraphQL */ `
     onUpdateTopic(filter: $filter) {
       id
       title
-      description
-      type
       createdAt
       updatedAt
       publishers {
@@ -67,6 +65,7 @@ export const onUpdateTopic = /* GraphQL */ `
           topicID
           avatarID
           coverID
+          creatorID
           __typename
         }
         nextToken
@@ -84,12 +83,13 @@ export const onUpdateTopic = /* GraphQL */ `
           coverID
           publisherID
           topicID
-          viewsCount
+          creatorID
           __typename
         }
         nextToken
         __typename
       }
+      creatorID
       __typename
     }
   }
@@ -99,8 +99,6 @@ export const onDeleteTopic = /* GraphQL */ `
     onDeleteTopic(filter: $filter) {
       id
       title
-      description
-      type
       createdAt
       updatedAt
       publishers {
@@ -113,6 +111,7 @@ export const onDeleteTopic = /* GraphQL */ `
           topicID
           avatarID
           coverID
+          creatorID
           __typename
         }
         nextToken
@@ -130,12 +129,13 @@ export const onDeleteTopic = /* GraphQL */ `
           coverID
           publisherID
           topicID
-          viewsCount
+          creatorID
           __typename
         }
         nextToken
         __typename
       }
+      creatorID
       __typename
     }
   }
@@ -242,10 +242,9 @@ export const onCreateNewsItem = /* GraphQL */ `
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
         sources {
@@ -276,14 +275,13 @@ export const onCreateNewsItem = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       topicID
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -294,8 +292,10 @@ export const onCreateNewsItem = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
+      creatorID
       rss {
         url
         ampUrl
@@ -324,7 +324,6 @@ export const onCreateNewsItem = /* GraphQL */ `
         durationFormatted
         __typename
       }
-      viewsCount
       __typename
     }
   }
@@ -368,10 +367,9 @@ export const onUpdateNewsItem = /* GraphQL */ `
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
         sources {
@@ -402,14 +400,13 @@ export const onUpdateNewsItem = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       topicID
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -420,8 +417,10 @@ export const onUpdateNewsItem = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
+      creatorID
       rss {
         url
         ampUrl
@@ -450,7 +449,6 @@ export const onUpdateNewsItem = /* GraphQL */ `
         durationFormatted
         __typename
       }
-      viewsCount
       __typename
     }
   }
@@ -494,10 +492,9 @@ export const onDeleteNewsItem = /* GraphQL */ `
         topic {
           id
           title
-          description
-          type
           createdAt
           updatedAt
+          creatorID
           __typename
         }
         sources {
@@ -528,14 +525,13 @@ export const onDeleteNewsItem = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       topicID
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -546,8 +542,10 @@ export const onDeleteNewsItem = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
+      creatorID
       rss {
         url
         ampUrl
@@ -576,7 +574,6 @@ export const onDeleteNewsItem = /* GraphQL */ `
         durationFormatted
         __typename
       }
-      viewsCount
       __typename
     }
   }
@@ -614,6 +611,7 @@ export const onCreatePublisherSource = /* GraphQL */ `
         url
         __typename
       }
+      creatorID
       createdAt
       updatedAt
       __typename
@@ -653,6 +651,7 @@ export const onUpdatePublisherSource = /* GraphQL */ `
         url
         __typename
       }
+      creatorID
       createdAt
       updatedAt
       __typename
@@ -692,6 +691,7 @@ export const onDeletePublisherSource = /* GraphQL */ `
         url
         __typename
       }
+      creatorID
       createdAt
       updatedAt
       __typename
@@ -712,8 +712,6 @@ export const onCreatePublisher = /* GraphQL */ `
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -724,6 +722,7 @@ export const onCreatePublisher = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       sources {
@@ -734,6 +733,7 @@ export const onCreatePublisher = /* GraphQL */ `
           isHidden
           publisherTopicID
           publisherID
+          creatorID
           createdAt
           updatedAt
           __typename
@@ -789,12 +789,13 @@ export const onCreatePublisher = /* GraphQL */ `
           coverID
           publisherID
           topicID
-          viewsCount
+          creatorID
           __typename
         }
         nextToken
         __typename
       }
+      creatorID
       __typename
     }
   }
@@ -813,8 +814,6 @@ export const onUpdatePublisher = /* GraphQL */ `
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -825,6 +824,7 @@ export const onUpdatePublisher = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       sources {
@@ -835,6 +835,7 @@ export const onUpdatePublisher = /* GraphQL */ `
           isHidden
           publisherTopicID
           publisherID
+          creatorID
           createdAt
           updatedAt
           __typename
@@ -890,12 +891,13 @@ export const onUpdatePublisher = /* GraphQL */ `
           coverID
           publisherID
           topicID
-          viewsCount
+          creatorID
           __typename
         }
         nextToken
         __typename
       }
+      creatorID
       __typename
     }
   }
@@ -914,8 +916,6 @@ export const onDeletePublisher = /* GraphQL */ `
       topic {
         id
         title
-        description
-        type
         createdAt
         updatedAt
         publishers {
@@ -926,6 +926,7 @@ export const onDeletePublisher = /* GraphQL */ `
           nextToken
           __typename
         }
+        creatorID
         __typename
       }
       sources {
@@ -936,6 +937,7 @@ export const onDeletePublisher = /* GraphQL */ `
           isHidden
           publisherTopicID
           publisherID
+          creatorID
           createdAt
           updatedAt
           __typename
@@ -991,12 +993,13 @@ export const onDeletePublisher = /* GraphQL */ `
           coverID
           publisherID
           topicID
-          viewsCount
+          creatorID
           __typename
         }
         nextToken
         __typename
       }
+      creatorID
       __typename
     }
   }
@@ -1009,6 +1012,52 @@ export const onCreateUser = /* GraphQL */ `
       email
       createdAt
       updatedAt
+      publishers {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          topicID
+          avatarID
+          coverID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      topics {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      news {
+        items {
+          id
+          type
+          title
+          description
+          publishedAt
+          createdAt
+          updatedAt
+          coverID
+          publisherID
+          topicID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
       __typename
     }
   }
@@ -1021,6 +1070,52 @@ export const onUpdateUser = /* GraphQL */ `
       email
       createdAt
       updatedAt
+      publishers {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          topicID
+          avatarID
+          coverID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      topics {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      news {
+        items {
+          id
+          type
+          title
+          description
+          publishedAt
+          createdAt
+          updatedAt
+          coverID
+          publisherID
+          topicID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
       __typename
     }
   }
@@ -1033,6 +1128,52 @@ export const onDeleteUser = /* GraphQL */ `
       email
       createdAt
       updatedAt
+      publishers {
+        items {
+          id
+          title
+          description
+          createdAt
+          updatedAt
+          topicID
+          avatarID
+          coverID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      topics {
+        items {
+          id
+          title
+          createdAt
+          updatedAt
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
+      news {
+        items {
+          id
+          type
+          title
+          description
+          publishedAt
+          createdAt
+          updatedAt
+          coverID
+          publisherID
+          topicID
+          creatorID
+          __typename
+        }
+        nextToken
+        __typename
+      }
       __typename
     }
   }
