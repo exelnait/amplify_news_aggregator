@@ -34,7 +34,7 @@ class NewsItemModelArticle
     }
     String category = item.rss!.categories?.first ?? 'No category';
     String author = item.rss!.author ?? 'No Author';
-    String imageUrl = item.cover?.resized?.medium ?? item.rss!.coverUrl ?? '';
+    String? imageUrl = item.cover?.resized?.medium ?? item.rss!.coverUrl;
     return NewsItemModelArticle(
         type: item.type,
         post: PostMediumBlock(

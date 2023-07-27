@@ -1623,6 +1623,13 @@ export type GetNewsFeedQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetNewsFeedQuery = { __typename?: 'Query', myUser: { __typename?: 'User', id: string, news?: { __typename?: 'ModelNewsItemConnection', items: Array<{ __typename?: 'NewsItem', id: string, title: string, description: string, type: SourceType, publishedAt: Date, cover?: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } | null, rss?: { __typename?: 'NewsItemDataRSS', url: string, coverUrl?: string | null } | null, youtube?: { __typename?: 'NewsItemDataYouTube', videoId: string, coverUrl?: string | null } | null, itunes?: { __typename?: 'NewsItemDataITunes', audioUrl: string, coverUrl?: string | null, durationFormatted?: string | null } | null, publisher: { __typename?: 'Publisher', id: string, title: string, avatar: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } } } | null> } | null } };
 
+export type GetPublisherNewsFeedQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetPublisherNewsFeedQuery = { __typename?: 'Query', getPublisher?: { __typename?: 'Publisher', id: string, title: string, news?: { __typename?: 'ModelNewsItemConnection', items: Array<{ __typename?: 'NewsItem', id: string, title: string, description: string, type: SourceType, publishedAt: Date, cover?: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } | null, rss?: { __typename?: 'NewsItemDataRSS', url: string, coverUrl?: string | null } | null, youtube?: { __typename?: 'NewsItemDataYouTube', videoId: string, coverUrl?: string | null } | null, itunes?: { __typename?: 'NewsItemDataITunes', audioUrl: string, coverUrl?: string | null, durationFormatted?: string | null } | null, publisher: { __typename?: 'Publisher', id: string, title: string, avatar: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } } } | null> } | null, avatar: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } } | null };
+
 export type PublisherInfoFragment = { __typename?: 'Publisher', id: string, title: string, avatar: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } };
 
 export type CreatePublisherMutationVariables = Exact<{
@@ -1704,7 +1711,7 @@ export const GetNewsFeedDocument = gql`
     query GetNewsFeed {
   myUser {
     ...BaseUser
-    news {
+    news(limit: 100, sortDirection: DESC) {
       items {
         ...BaseNewsItem
       }
@@ -1740,6 +1747,47 @@ export function useGetNewsFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetNewsFeedQueryHookResult = ReturnType<typeof useGetNewsFeedQuery>;
 export type GetNewsFeedLazyQueryHookResult = ReturnType<typeof useGetNewsFeedLazyQuery>;
 export type GetNewsFeedQueryResult = Apollo.QueryResult<GetNewsFeedQuery, GetNewsFeedQueryVariables>;
+export const GetPublisherNewsFeedDocument = gql`
+    query GetPublisherNewsFeed($id: ID!) {
+  getPublisher(id: $id) {
+    ...PublisherInfo
+    news(limit: 100, sortDirection: DESC) {
+      items {
+        ...BaseNewsItem
+      }
+    }
+  }
+}
+    ${PublisherInfoFragmentDoc}
+${BaseNewsItemFragmentDoc}`;
+
+/**
+ * __useGetPublisherNewsFeedQuery__
+ *
+ * To run a query within a React component, call `useGetPublisherNewsFeedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPublisherNewsFeedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPublisherNewsFeedQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetPublisherNewsFeedQuery(baseOptions: Apollo.QueryHookOptions<GetPublisherNewsFeedQuery, GetPublisherNewsFeedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetPublisherNewsFeedQuery, GetPublisherNewsFeedQueryVariables>(GetPublisherNewsFeedDocument, options);
+      }
+export function useGetPublisherNewsFeedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPublisherNewsFeedQuery, GetPublisherNewsFeedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetPublisherNewsFeedQuery, GetPublisherNewsFeedQueryVariables>(GetPublisherNewsFeedDocument, options);
+        }
+export type GetPublisherNewsFeedQueryHookResult = ReturnType<typeof useGetPublisherNewsFeedQuery>;
+export type GetPublisherNewsFeedLazyQueryHookResult = ReturnType<typeof useGetPublisherNewsFeedLazyQuery>;
+export type GetPublisherNewsFeedQueryResult = Apollo.QueryResult<GetPublisherNewsFeedQuery, GetPublisherNewsFeedQueryVariables>;
 export const CreatePublisherDocument = gql`
     mutation CreatePublisher($input: CreatePublisherCustomInput!) {
   createPublisherCustom(input: $input) {

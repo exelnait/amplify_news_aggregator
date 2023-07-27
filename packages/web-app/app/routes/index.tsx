@@ -1,9 +1,11 @@
 import { redirect } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
 
 export const loader = async () => {
-  redirect('/feed');
+  return redirect('/feed');
 };
 
 export default function Index() {
-  return <div>Index</div>;
+  useLoaderData<typeof loader>();
+  return <></>;
 }

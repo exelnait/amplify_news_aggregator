@@ -1,6 +1,6 @@
 import React, { useCallback, useDeferredValue, useState } from 'react';
 import { Button, Expander, ExpanderItem } from '@aws-amplify/ui-react';
-import { Outlet } from '@remix-run/react';
+import { Link, Outlet } from '@remix-run/react';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import {
   ListPublishersDocument,
@@ -14,6 +14,7 @@ import {
 import {
   CreateTopicFormData,
   CreateTopicModal,
+  TopicsWrapper,
 } from '../presentation/topic/topic.presentation';
 import {
   CreatePublisherFormData,
@@ -128,14 +129,36 @@ export default function MainLayout() {
 
   return (
     <div className="grid min-h-screen grid-rows-header bg-zinc-100">
-      <div>Navbar</div>
+      {/*<div>Navbar</div>*/}
       <div className="grid md:grid-cols-sidebar">
-        <div className="p-2">
-          <Expander type="multiple" value={expanded}>
+        <div className="p-3">
+          <ul className="space-y-2 font-medium mb-6">
+            <li>
+              <Link
+                to="/feed"
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+              >
+                <svg
+                  className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 18 18"
+                >
+                  <path d="M6.143 0H1.857A1.857 1.857 0 0 0 0 1.857v4.286C0 7.169.831 8 1.857 8h4.286A1.857 1.857 0 0 0 8 6.143V1.857A1.857 1.857 0 0 0 6.143 0Zm10 0h-4.286A1.857 1.857 0 0 0 10 1.857v4.286C10 7.169 10.831 8 11.857 8h4.286A1.857 1.857 0 0 0 18 6.143V1.857A1.857 1.857 0 0 0 16.143 0Zm-10 10H1.857A1.857 1.857 0 0 0 0 11.857v4.286C0 17.169.831 18 1.857 18h4.286A1.857 1.857 0 0 0 8 16.143v-4.286A1.857 1.857 0 0 0 6.143 10Zm10 0h-4.286A1.857 1.857 0 0 0 10 11.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 18 16.143v-4.286A1.857 1.857 0 0 0 16.143 10Z" />
+                </svg>
+                <span className="flex-1 ml-3 whitespace-nowrap">News Feed</span>
+              </Link>
+            </li>
+          </ul>
+          <TopicsWrapper>
             {topics.map((topic) => (
-              <ExpanderItem title={topic.title} value={topic.id}>
+              <div key={topic.id}>
+                <h3 className=" text-lg mb-2">{topic.title}</h3>
                 {topic.publishers.map((publisher) => (
-                  <PublisherCard publisher={publisher}></PublisherCard>
+                  <Link to={`/publisher/${publisher.id}`}>
+                    <PublisherCard publisher={publisher}></PublisherCard>
+                  </Link>
                 ))}
                 <div className="w-full flex justify-center p-2">
                   <Button
@@ -148,9 +171,9 @@ export default function MainLayout() {
                     <PlusIcon className="h-6 w-6" />
                   </Button>
                 </div>
-              </ExpanderItem>
+              </div>
             ))}
-          </Expander>
+          </TopicsWrapper>
           <div className="w-full flex justify-center p-2">
             <Button
               className="mt-10"
@@ -161,6 +184,7 @@ export default function MainLayout() {
           </div>
           {activeTopic && (
             <CreatePublisherModal
+              isLoading={loadingCreatePublisher}
               isOpen={isOpenCreatePublisherModal}
               onClose={() => setIsOpenCreatePublisherModal(false)}
               topicTitle={activeTopic.title}
@@ -171,6 +195,7 @@ export default function MainLayout() {
           )}
           {userId && (
             <CreateTopicModal
+              isLoading={loadingCreateTopic}
               isOpen={isOpenCreateTopicModal}
               onClose={() => setIsOpenCreateTopicModal(false)}
               onSubmit={handleCreateTopic}

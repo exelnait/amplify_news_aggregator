@@ -50,13 +50,16 @@ export const handler: AppSyncResolverHandler<
 
     const publisherId = randomUUID();
 
+    const sourcesToAggregate: SourceType[] = [];
+
     const sourceInputs = await Promise.all(
       sources.map(async (source) => {
         let title: string = null;
         switch (source.type) {
           case SourceType.RSS: {
-            const feed = await parseRssFeed(source.rss.url);
-            title = feed.title;
+            // const feed = await parseRssFeed(source.rss.url);
+            title = 'RSS';
+            sourcesToAggregate.push(SourceType.RSS);
             break;
           }
           case SourceType.YOUTUBE: {
@@ -79,12 +82,15 @@ export const handler: AppSyncResolverHandler<
               }
             }
             avatarUrl = channelInfo.thumbnails.default.url;
-            title = channelInfo.title;
+            title = 'YouTube';
+            sourcesToAggregate.push(SourceType.YOUTUBE);
             break;
           }
           case SourceType.ITUNES: {
-            const feed = await parseRssFeed(source.itunes.url);
-            title = feed.title;
+            // const feed = await parseRssFeed(source.itunes.url);
+            title = 'Apple Podcasts';
+            sourcesToAggregate.push(SourceType.ITUNES);
+            break;
           }
         }
         return {
@@ -150,7 +156,10 @@ export const handler: AppSyncResolverHandler<
 
     await createPublisherSources(sourceInputs);
 
-    await aggregateAllNewsItemsForPublisher(createdPublisher.id);
+    await aggregateAllNewsItemsForPublisher(
+      createdPublisher.id,
+      sourcesToAggregate
+    );
 
     return createdPublisher;
   } catch (e) {

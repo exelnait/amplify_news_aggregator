@@ -64,7 +64,7 @@ class PublisherNewsFeedScreen extends HookWidget {
               child: TabBarView(
                 controller: tabController,
                 children: [
-                  PublisherGeneralNewsFeed(queryResult: queryResult),
+                  PublisherGeneralNewsFeed(publisherId: publisherId, queryResult: queryResult),
                   ...sources.map((source) => PublisherNewsFeedByType(
                       publisherId: publisherId, type: source!.type)),
                 ],

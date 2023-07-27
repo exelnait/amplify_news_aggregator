@@ -31,6 +31,16 @@ final routerConfig = GoRouter(
               path: '/news_feed',
               builder: (context, state) =>
               const NewsFeedScreen(),
+              routes: [
+                GoRoute(
+                  path: 'open/rss/:id',
+                  builder: (context, state) => OpenArticleScreen(id: state.pathParameters['id']!, isVideoArticle: false),
+                ),
+                GoRoute(
+                  path: 'open/youtube/:id',
+                  builder: (context, state) => OpenVideoScreen(videoId: state.pathParameters['id']!),
+                ),
+              ]
             ),
           ],
         ),
@@ -42,6 +52,22 @@ final routerConfig = GoRouter(
               path: '/news_stand',
               builder: (context, state) =>
               const NewsStandScreen(),
+              routes: [
+                GoRoute(
+                  path: 'publisher/:publisherId',
+                  builder: (context, state) => PublisherNewsFeedScreen(publisherId: state.pathParameters['publisherId']!),
+                  routes: [
+                    GoRoute(
+                      path: 'open/rss/:id',
+                      builder: (context, state) => OpenArticleScreen(id: state.pathParameters['id']!, isVideoArticle: false),
+                    ),
+                    GoRoute(
+                      path: 'open/youtube/:id',
+                      builder: (context, state) => OpenVideoScreen(videoId: state.pathParameters['id']!),
+                    ),
+                  ]
+                ),
+              ]
             ),
           ],
         ),
@@ -56,18 +82,6 @@ final routerConfig = GoRouter(
           ],
         ),
       ],
-    ),
-    GoRoute(
-      path: '/publisher/:id',
-      builder: (context, state) => PublisherNewsFeedScreen(publisherId: state.pathParameters['id']!),
-    ),
-    GoRoute(
-      path: '/open/rss/:id',
-      builder: (context, state) => OpenArticleScreen(id: state.pathParameters['id']!, isVideoArticle: false),
-    ),
-    GoRoute(
-      path: '/open/youtube/:id',
-      builder: (context, state) => OpenVideoScreen(videoId: state.pathParameters['id']!),
     ),
   ],
 );

@@ -11,14 +11,14 @@ class PostMediumOverlaidLayout extends StatelessWidget {
   const PostMediumOverlaidLayout({
     super.key,
     required this.title,
-    required this.imageUrl,
+    this.imageUrl,
   });
 
   /// Title of post.
   final String title;
 
   /// The url of this post image displayed in overlay.
-  final String imageUrl;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +26,11 @@ class PostMediumOverlaidLayout extends StatelessWidget {
     return Stack(
       alignment: Alignment.bottomLeft,
       children: [
-        OverlaidImage(
-          imageUrl: imageUrl,
-          gradientColor: AppColors.black.withOpacity(0.7),
-        ),
+        if (imageUrl != null)
+          OverlaidImage(
+            imageUrl: imageUrl!,
+            gradientColor: AppColors.black.withOpacity(0.7),
+          ),
         Padding(
           padding: const EdgeInsets.all(AppSpacing.sm),
           child: Text(

@@ -24,11 +24,11 @@ class PostMedium extends StatelessWidget {
       child: block.isContentOverlaid
           ? PostMediumOverlaidLayout(
               title: block.title,
-              imageUrl: block.imageUrl!,
+              imageUrl: block.imageUrl,
             )
           : PostMediumDescriptionLayout(
               title: block.title,
-              imageUrl: block.imageUrl!,
+              imageUrl: block.imageUrl,
               description: block.description,
               publishedAt: block.publishedAt,
               author: block.author,

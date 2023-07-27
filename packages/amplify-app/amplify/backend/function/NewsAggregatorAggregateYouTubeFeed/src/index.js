@@ -8,10 +8,12 @@ var crypto = require('crypto');
 var xml2js = require('xml2js');
 var axios = require('axios');
 var htmlToText = require('html-to-text');
+var linkifyHtml = require('linkify-html');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
+var linkifyHtml__default = /*#__PURE__*/_interopDefaultLegacy(linkifyHtml);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -130,6 +132,20 @@ function getAllPublisherSourcesByType(type) {
         },
         FilterExpression: "isHidden = :isHidden",
         IndexName: 'byType',
+        TableName: TABLES.PublisherSource,
+    });
+}
+function getPublisherSourcesByTypeAndPublisher(type, publisherID) {
+    return queryItems({
+        KeyConditionExpression: "publisherID = :publisherID AND #type = :type",
+        ExpressionAttributeNames: { "#type": "type" },
+        ExpressionAttributeValues: {
+            ":type": { S: type },
+            ":publisherID": { S: publisherID },
+            ":isHidden": { BOOL: false }
+        },
+        FilterExpression: "isHidden = :isHidden",
+        IndexName: 'byPublisherAndType',
         TableName: TABLES.PublisherSource,
     });
 }
@@ -285,7 +301,6 @@ function convertHtmlToText(html) {
     }).replace(/\[.+?\]/g, '');
 }
 
-const linkifyHtml = require('linkify-html');
 function normalizeYouTubeXMLFeedData(videosArray) {
     return videosArray.map((video) => {
         const description_html = normalizeYouTubeXMLDescription(video['media:group'][0]['media:description'][0]);
@@ -297,44 +312,66 @@ function normalizeYouTubeXMLFeedData(videosArray) {
             channel_id: video['yt:channelId'][0],
             description: convertHtmlToText(description_html),
             description_html,
-            published_date: video['published'][0]
+            published_date: video['published'][0],
         };
     });
 }
 function normalizeYouTubeXMLDescription(description) {
     let result = '';
     description.split('\n').forEach((string) => {
-        if (string.search('vk') < 0
-            || string.search('twitter') < 0
-            || string.search('facebook') < 0
-            || string.search('youtube') < 0
-            || string.search('goo.gl') < 0
-            || string.search('plus.google') < 0) {
+        if (string.search('vk') < 0 ||
+            string.search('twitter') < 0 ||
+            string.search('facebook') < 0 ||
+            string.search('youtube') < 0 ||
+            string.search('goo.gl') < 0 ||
+            string.search('plus.google') < 0) {
             result += string + '<br/>';
         }
     });
-    return linkifyHtml(result);
+    return linkifyHtml__default["default"](result);
 }
 
+const INTERVAL_IN_MINUTES = 1440;
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`EVENT: ${JSON.stringify(event)}`);
+    const { detail, time } = event;
     const items = [];
+    let intervalAmount = null;
+    if (time) {
+        console.log(`Interval time: ${time}`);
+        intervalAmount = new Date(time);
+        intervalAmount.setMinutes(intervalAmount.getMinutes() - INTERVAL_IN_MINUTES); // Filter news older than 10 minutes
+    }
     try {
-        const sources = yield getAllPublisherSourcesByType(SourceType.YOUTUBE);
+        let sources = [];
+        if (detail === null || detail === void 0 ? void 0 : detail.publisherID) {
+            console.log(`Getting all YouTube resources by Publisher ID: ${detail.publisherID}`);
+            sources = yield getPublisherSourcesByTypeAndPublisher(SourceType.YOUTUBE, detail.publisherID);
+        }
+        else {
+            console.log(`Getting YouTube RSS sources`);
+            sources = yield getAllPublisherSourcesByType(SourceType.YOUTUBE);
+        }
         yield Promise.all(sources.map((source) => __awaiter(void 0, void 0, void 0, function* () {
             // Fetch and parse the YouTube XML feed
             const feed = yield parseYouTubeXMLFeed(source.youtube.channelID);
             const feedItems = feed.entry;
-            const normalizedFeedItems = normalizeYouTubeXMLFeedData(feedItems);
+            let normalizedFeedItems = normalizeYouTubeXMLFeedData(feedItems);
+            if (intervalAmount) {
+                normalizedFeedItems = normalizedFeedItems.filter((item) => {
+                    console.log(intervalAmount, new Date(item.published_date), new Date(item.published_date) > intervalAmount);
+                    return new Date(item.published_date) > intervalAmount;
+                });
+            }
             normalizedFeedItems.forEach((item) => {
                 items.push(NewsItemYouTube.fromNormalizedYouTubeXMLItem(item, source));
             });
         })));
-        yield createNewsItems(items.map(item => item.toInput()));
+        yield createNewsItems(items.map((item) => item.toInput()));
     }
     catch (error) {
         console.error(error);
-        // create DLQ item
+        // TODO: create DLQ item
     }
     return null;
 });

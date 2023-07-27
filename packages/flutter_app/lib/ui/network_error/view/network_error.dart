@@ -17,7 +17,9 @@ class NetworkError extends StatelessWidget {
       pageBuilder: (_, __, ___) => Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          leading: const AppBackButton(),
+          leading: AppBackButton(onTap: () {
+
+          }),
         ),
         body: Center(
           child: NetworkError(onRetry: onRetry),

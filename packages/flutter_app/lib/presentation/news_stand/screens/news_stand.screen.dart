@@ -37,7 +37,7 @@ class NewsStandScreen extends HookWidget {
                       data: publishers,
                       onAdd: () {},
                       onTap: (PublisherModel newsSource) {
-                        context.go('/publisher/${newsSource.id}');
+                        context.go('/news_stand/publisher/${newsSource.id}');
                       },
                     );
                   }) ??

@@ -1,1 +1,2 @@
-export * from './Modal';
+export * from './components/Modal';
+export * from './components/PageLoader';

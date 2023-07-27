@@ -1,9 +1,20 @@
 query GetNewsFeed {
     myUser {
         ...BaseUser
-        news {
+        news(limit: 100, sortDirection: DESC) {
             items {
                  ...BaseNewsItem
+            }
+        }
+    }
+}
+
+query GetPublisherNewsFeed($id: ID!) {
+    getPublisher(id: $id) {
+        ...PublisherInfo
+        news(limit: 100, sortDirection: DESC) {
+            items {
+                ...BaseNewsItem
             }
         }
     }

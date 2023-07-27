@@ -186,11 +186,6 @@ var ModelAttributeTypes;
     ModelAttributeTypes["stringSet"] = "stringSet";
     ModelAttributeTypes["_null"] = "_null";
 })(ModelAttributeTypes || (ModelAttributeTypes = {}));
-var ModelSortDirection;
-(function (ModelSortDirection) {
-    ModelSortDirection["ASC"] = "ASC";
-    ModelSortDirection["DESC"] = "DESC";
-})(ModelSortDirection || (ModelSortDirection = {}));
 var SearchableNewsItemSortableFields;
 (function (SearchableNewsItemSortableFields) {
     SearchableNewsItemSortableFields["id"] = "id";
@@ -231,6 +226,11 @@ var SearchableNewsItemAggregateField;
     SearchableNewsItemAggregateField["topicID"] = "topicID";
     SearchableNewsItemAggregateField["creatorID"] = "creatorID";
 })(SearchableNewsItemAggregateField || (SearchableNewsItemAggregateField = {}));
+var ModelSortDirection;
+(function (ModelSortDirection) {
+    ModelSortDirection["ASC"] = "ASC";
+    ModelSortDirection["DESC"] = "DESC";
+})(ModelSortDirection || (ModelSortDirection = {}));
 
 class NewsItemRSS {
     constructor(data) {
@@ -315,11 +315,11 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
             });
         })));
         console.log('Items to add count: ', items.length);
-        yield createNewsItems(items.map(item => item.toInput()));
+        yield createNewsItems(items.map((item) => item.toInput()));
     }
     catch (error) {
         console.error(error);
-        // create DLQ item
+        // TODO: create DLQ item
     }
     return null;
 });

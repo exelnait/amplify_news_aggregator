@@ -1,24 +1,32 @@
-import type {DynamoDBBatchResponse, DynamoDBStreamHandler, DynamoDBBatchItemFailure} from 'aws-lambda';
-import type {AttributeValue} from "@aws-sdk/client-dynamodb";
+import type {
+  DynamoDBBatchResponse,
+  DynamoDBStreamHandler,
+  DynamoDBBatchItemFailure,
+} from 'aws-lambda';
+import type { AttributeValue } from '@aws-sdk/client-dynamodb';
 
-import {unmarshall} from "@aws-sdk/util-dynamodb";
+import { unmarshall } from '@aws-sdk/util-dynamodb';
 
-import {NewsItem, PictureType, SourceType} from "../../../../../src/API";
-import {updateNewsItem} from "../../../../../src/repositories/news_item.repository";
-import {normalizeNewsItemFromRSS} from "../../../../../src/services/news.service";
-import {saveFileByUrl} from "../../../../../src/aws-utils/s3";
-import {createPicture} from "../../../../../src/repositories/picture.repository";
+import { NewsItem, PictureType, SourceType } from '../../../../../src/API';
+import { updateNewsItem } from '../../../../../src/repositories/news_item.repository';
+import { normalizeNewsItemFromRSS } from '../../../../../src/services/news.service';
+import { saveFileByUrl } from '../../../../../src/aws-utils/s3';
+import { createPicture } from '../../../../../src/repositories/picture.repository';
 
-export const handler:DynamoDBStreamHandler = async (event): Promise<DynamoDBBatchResponse> => {
+export const handler: DynamoDBStreamHandler = async (
+  event
+): Promise<DynamoDBBatchResponse> => {
   const batchItemFailures: DynamoDBBatchItemFailure[] = [];
 
   const updatedNewsItems: NewsItem[] = [];
 
-  console.log("Records Count: " + event.Records.length);
+  console.log('Records Count: ' + event.Records.length);
   for (const record of event.Records) {
-    if (record.eventName == "INSERT") {
+    if (record.eventName == 'INSERT') {
       console.log('DynamoDB Record: %j', record.dynamodb);
-      const newsItem = unmarshall(record.dynamodb.NewImage as Record<string, AttributeValue>) as NewsItem;
+      const newsItem = unmarshall(
+        record.dynamodb.NewImage as Record<string, AttributeValue>
+      ) as NewsItem;
 
       try {
         let updatedNewsItem: NewsItem = null;
@@ -30,28 +38,28 @@ export const handler:DynamoDBStreamHandler = async (event): Promise<DynamoDBBatc
         }
       } catch (e) {
         const curRecordSequenceNumber = record.dynamodb.SequenceNumber;
-        batchItemFailures.push({"itemIdentifier": curRecordSequenceNumber})
+        batchItemFailures.push({ itemIdentifier: curRecordSequenceNumber });
       }
     }
   }
 
   await Promise.all([
-      ...updatedNewsItems.map(updateNewsItem),
-      ...updatedNewsItems.filter(item => !!item.coverID).map(createCover)
+    ...updatedNewsItems.map(updateNewsItem),
+    ...updatedNewsItems.filter((item) => !!item.coverID).map(createCover),
   ]);
 
-  return {"batchItemFailures":batchItemFailures};
+  return { batchItemFailures: batchItemFailures };
 };
 
 async function createCover(item: NewsItem): Promise<void> {
   const coverFile = await saveFileByUrl({
     url: item.rss.coverUrl,
-    key: `public/news/rss/${item.id}/cover`,
+    key: `public/news/${item.type.toLowerCase()}/${item.id}/cover`,
   });
   const coverPicture = await createPicture({
     id: item.coverID,
     type: PictureType.COVER,
     bucket: coverFile.bucket,
-    key: coverFile.key
-  })
+    key: coverFile.key,
+  });
 }

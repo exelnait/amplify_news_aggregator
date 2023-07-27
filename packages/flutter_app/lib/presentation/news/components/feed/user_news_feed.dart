@@ -39,10 +39,10 @@ class UserNewsFeed extends HookWidget with OpenNewsItemPageMixin {
       hasMore: data.hasMore,
       items: data.news,
       onOpenArticle: ({required articleId, isVideoArticle}) {
-        openArticle(context, articleId);
+        openArticle(context, '/news_feed', articleId);
       },
       onOpenVideo: ({required videoId}) {
-        openVideo(context, videoId);
+        openVideo(context, '/news_feed', videoId);
       },
       onOpenPodcast: ({required podcastId}) {
         openAudioPlayer(context, podcastId);

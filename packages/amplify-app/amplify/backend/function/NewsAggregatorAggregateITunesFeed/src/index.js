@@ -7,10 +7,12 @@ var utilDynamodb = require('@aws-sdk/util-dynamodb');
 var crypto = require('crypto');
 var xml2js = require('xml2js');
 var axios = require('axios');
+var linkifyHtml = require('linkify-html');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios);
+var linkifyHtml__default = /*#__PURE__*/_interopDefaultLegacy(linkifyHtml);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -132,6 +134,20 @@ function getAllPublisherSourcesByType(type) {
         TableName: TABLES.PublisherSource,
     });
 }
+function getPublisherSourcesByTypeAndPublisher(type, publisherID) {
+    return queryItems({
+        KeyConditionExpression: "publisherID = :publisherID AND #type = :type",
+        ExpressionAttributeNames: { "#type": "type" },
+        ExpressionAttributeValues: {
+            ":type": { S: type },
+            ":publisherID": { S: publisherID },
+            ":isHidden": { BOOL: false }
+        },
+        FilterExpression: "isHidden = :isHidden",
+        IndexName: 'byPublisherAndType',
+        TableName: TABLES.PublisherSource,
+    });
+}
 
 function createNewsItems(inputs) {
     let inputsWithoutDuplicates = removeNewsItemInputItems(inputs);
@@ -173,11 +189,6 @@ var ModelAttributeTypes;
     ModelAttributeTypes["stringSet"] = "stringSet";
     ModelAttributeTypes["_null"] = "_null";
 })(ModelAttributeTypes || (ModelAttributeTypes = {}));
-var ModelSortDirection;
-(function (ModelSortDirection) {
-    ModelSortDirection["ASC"] = "ASC";
-    ModelSortDirection["DESC"] = "DESC";
-})(ModelSortDirection || (ModelSortDirection = {}));
 var SearchableNewsItemSortableFields;
 (function (SearchableNewsItemSortableFields) {
     SearchableNewsItemSortableFields["id"] = "id";
@@ -218,6 +229,11 @@ var SearchableNewsItemAggregateField;
     SearchableNewsItemAggregateField["topicID"] = "topicID";
     SearchableNewsItemAggregateField["creatorID"] = "creatorID";
 })(SearchableNewsItemAggregateField || (SearchableNewsItemAggregateField = {}));
+var ModelSortDirection;
+(function (ModelSortDirection) {
+    ModelSortDirection["ASC"] = "ASC";
+    ModelSortDirection["DESC"] = "DESC";
+})(ModelSortDirection || (ModelSortDirection = {}));
 
 function parseITunesXMLFeed(feedUrl) {
     return axios__default["default"]({
@@ -239,13 +255,14 @@ function parseITunesXMLFeed(feedUrl) {
     });
 }
 
-const linkifyHtml = require('linkify-html');
 function normalizeITunesXMLFeedData(podcastsArray) {
     return podcastsArray.item.map((podcast) => {
         return {
             title: podcast.title ? podcast.title[0] : null,
             link: podcast.link ? podcast.link[0] : null,
-            published_date: podcast.pubDate ? new Date(podcast.pubDate[0]).toISOString() : null,
+            published_date: podcast.pubDate
+                ? new Date(podcast.pubDate[0]).toISOString()
+                : null,
             duration: normalizeDuration(podcast),
             keywords: normalizeKeywords(podcast),
             author: normalizeAuthor(podcast),
@@ -253,12 +270,16 @@ function normalizeITunesXMLFeedData(podcastsArray) {
             image: normalizeImage(podcast),
             description: normalizeDescription(podcast),
             description_html: normalizeDescriptionHTML(podcast),
-            is_explicit: podcast['itunes:explicit'] ? podcast['itunes:explicit'][0] == 'yes' : false,
+            is_explicit: podcast['itunes:explicit']
+                ? podcast['itunes:explicit'][0] == 'yes'
+                : false,
         };
     });
 }
 function normalizeDuration(podcast) {
-    var duration = podcast['itunes:duration'] ? podcast['itunes:duration'][0] : null;
+    var duration = podcast['itunes:duration']
+        ? podcast['itunes:duration'][0]
+        : null;
     if (duration && !duration.includes(':')) {
         duration = duration.substring(0, 2) + ':' + duration.substring(2, 4);
     }
@@ -306,14 +327,18 @@ function normalizeAudio(podcast) {
     return audio === null || audio === void 0 ? void 0 : audio.url;
 }
 function normalizeDescription(podcast) {
-    var description = podcast['itunes:summary'] ? podcast['itunes:summary'][0] : null;
+    var description = podcast['itunes:summary']
+        ? podcast['itunes:summary'][0]
+        : null;
     if (!description) {
-        description = podcast['itunes:subtitle'] ? podcast['itunes:subtitle'][0] : null;
+        description = podcast['itunes:subtitle']
+            ? podcast['itunes:subtitle'][0]
+            : null;
     }
     if (description && typeof description == 'object') {
         description = description[0];
     }
-    return description ? linkifyHtml(description) : null;
+    return description ? linkifyHtml__default["default"](description) : null;
 }
 function normalizeDescriptionHTML(podcast) {
     let description_html = null;
@@ -326,9 +351,13 @@ function normalizeDescriptionHTML(podcast) {
     return description_html;
 }
 function normalizeImage(podcast) {
-    let image = podcast['itunes:image'] ? podcast['itunes:image'][0]['$']['href'] : null;
+    let image = podcast['itunes:image']
+        ? podcast['itunes:image'][0]['$']['href']
+        : null;
     if (!image) {
-        image = podcast['media:thumbnail'] ? podcast['media:thumbnail'][0]['$']['url'] : null;
+        image = podcast['media:thumbnail']
+            ? podcast['media:thumbnail'][0]['$']['url']
+            : null;
     }
     return image;
 }
@@ -370,24 +399,46 @@ class NewsItemITunes {
     }
 }
 
+const INTERVAL_IN_MINUTES = 1440;
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`EVENT: ${JSON.stringify(event)}`);
+    const { detail, time } = event;
     const items = [];
+    let intervalAmount = null;
+    if (time) {
+        console.log(`Interval time: ${time}`);
+        intervalAmount = new Date(time);
+        intervalAmount.setMinutes(intervalAmount.getMinutes() - INTERVAL_IN_MINUTES); // Filter news older than 10 minutes
+    }
     try {
-        const sources = yield getAllPublisherSourcesByType(SourceType.ITUNES);
+        let sources = [];
+        if (detail === null || detail === void 0 ? void 0 : detail.publisherID) {
+            console.log(`Getting all ITunes resources by Publisher ID: ${detail.publisherID}`);
+            sources = yield getPublisherSourcesByTypeAndPublisher(SourceType.ITUNES, detail.publisherID);
+        }
+        else {
+            console.log(`Getting all ITunes sources`);
+            sources = yield getAllPublisherSourcesByType(SourceType.ITUNES);
+        }
         yield Promise.all(sources.map((source) => __awaiter(void 0, void 0, void 0, function* () {
-            // Fetch and parse the YouTube XML feed
-            const feedData = yield parseITunesXMLFeed(source.itunes.url);
-            const normalizedFeedItems = normalizeITunesXMLFeedData(feedData);
+            // Fetch and parse the ITunes XML feed
+            const feedItems = yield parseITunesXMLFeed(source.itunes.url);
+            let normalizedFeedItems = normalizeITunesXMLFeedData(feedItems);
+            if (intervalAmount) {
+                normalizedFeedItems = normalizedFeedItems.filter((item) => {
+                    console.log(intervalAmount, new Date(item.published_date), new Date(item.published_date) > intervalAmount);
+                    return new Date(item.published_date) > intervalAmount;
+                });
+            }
             normalizedFeedItems.forEach((item) => {
                 items.push(NewsItemITunes.fromNormalizedITunesXMLItem(item, source));
             });
         })));
-        yield createNewsItems(items.map(item => item.toInput()));
+        yield createNewsItems(items.map((item) => item.toInput()));
     }
     catch (error) {
         console.error(error);
-        // create DLQ item
+        // TODO: create DLQ item
     }
     return null;
 });

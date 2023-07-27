@@ -7,13 +7,11 @@ var clientS3 = require('@aws-sdk/client-s3');
 var axios$1 = require('axios');
 var clientDynamodb = require('@aws-sdk/client-dynamodb');
 var utilDynamodb = require('@aws-sdk/util-dynamodb');
-var RSSFeedParser = require('rss-parser');
 var clientLambda = require('@aws-sdk/client-lambda');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
 var axios__default = /*#__PURE__*/_interopDefaultLegacy(axios$1);
-var RSSFeedParser__default = /*#__PURE__*/_interopDefaultLegacy(RSSFeedParser);
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -239,14 +237,6 @@ function createPicture(input) {
     return putItem(TABLES.Picture, input, "Picture");
 }
 
-// @ts-ignore
-function parseRssFeed(url) {
-    const parser = new RSSFeedParser__default["default"]();
-    return parser.parseURL(url).then((feed) => {
-        return feed;
-    });
-}
-
 const client = new clientLambda.LambdaClient({});
 function invokeLambda(name, input, invocationType = clientLambda.InvocationType.RequestResponse) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -270,13 +260,42 @@ function uint8ArrayToJSON(array) {
 }
 
 const FUNCTION_AGGREGATERSSFEED_NAME = process.env.FUNCTION_NEWSAGGREGATORAGGREGATERSSFEED_NAME;
-process.env.FUNCTION_NEWSAGGREGATORAGGREGATEITUNESFEED_NAME;
-process.env.FUNCTION_NEWSAGGREGATORAGGREGATEYOUTUBEFEED_NAME;
-function aggregateAllNewsItemsForPublisher(publisherID) {
+const FUNCTION_AGGREGATEITUNESFEED_NAME = process.env.FUNCTION_NEWSAGGREGATORAGGREGATEITUNESFEED_NAME;
+const FUNCTION_AGGREGATEYOUTUBEFEED_NAME = process.env.FUNCTION_NEWSAGGREGATORAGGREGATEYOUTUBEFEED_NAME;
+function aggregateAllNewsItemsForPublisher(publisherID, sourcesToAggregate) {
+    return Promise.all(sourcesToAggregate.map((sourceType) => {
+        switch (sourceType) {
+            case SourceType.RSS:
+                return invokeAggregateRSSLambda(publisherID);
+            case SourceType.ITUNES:
+                return invokeAggregateITunesLambda(publisherID);
+            case SourceType.YOUTUBE:
+                return invokeAggregateYouTubeLambda(publisherID);
+            default:
+                console.error(`Source type ${sourceType} is not supported`);
+                return Promise.resolve();
+        }
+    }));
+}
+function invokeAggregateRSSLambda(publsiherID) {
     return invokeLambda(FUNCTION_AGGREGATERSSFEED_NAME, {
         detail: {
-            publisherID,
-        }
+            publisherID: publsiherID,
+        },
+    });
+}
+function invokeAggregateYouTubeLambda(publsiherID) {
+    return invokeLambda(FUNCTION_AGGREGATEYOUTUBEFEED_NAME, {
+        detail: {
+            publisherID: publsiherID,
+        },
+    });
+}
+function invokeAggregateITunesLambda(publsiherID) {
+    return invokeLambda(FUNCTION_AGGREGATEITUNESFEED_NAME, {
+        detail: {
+            publisherID: publsiherID,
+        },
     });
 }
 
@@ -363,12 +382,14 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
         const currentUserID = currentUser.id;
         let { title, description, avatarUrl, coverUrl, topicID, websiteUrl, sources, } = event.arguments.input;
         const publisherId = crypto.randomUUID();
+        const sourcesToAggregate = [];
         const sourceInputs = yield Promise.all(sources.map((source) => __awaiter(void 0, void 0, void 0, function* () {
             let title = null;
             switch (source.type) {
                 case SourceType.RSS: {
-                    const feed = yield parseRssFeed(source.rss.url);
-                    title = feed.title;
+                    // const feed = await parseRssFeed(source.rss.url);
+                    title = 'RSS';
+                    sourcesToAggregate.push(SourceType.RSS);
                     break;
                 }
                 case SourceType.YOUTUBE: {
@@ -388,12 +409,15 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
                         }
                     }
                     avatarUrl = channelInfo.thumbnails.default.url;
-                    title = channelInfo.title;
+                    title = 'YouTube';
+                    sourcesToAggregate.push(SourceType.YOUTUBE);
                     break;
                 }
                 case SourceType.ITUNES: {
-                    const feed = yield parseRssFeed(source.itunes.url);
-                    title = feed.title;
+                    // const feed = await parseRssFeed(source.itunes.url);
+                    title = 'Apple Podcasts';
+                    sourcesToAggregate.push(SourceType.ITUNES);
+                    break;
                 }
             }
             return {
@@ -452,7 +476,7 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
             coverID: coverPicture === null || coverPicture === void 0 ? void 0 : coverPicture.id,
         });
         yield createPublisherSources(sourceInputs);
-        yield aggregateAllNewsItemsForPublisher(createdPublisher.id);
+        yield aggregateAllNewsItemsForPublisher(createdPublisher.id, sourcesToAggregate);
         return createdPublisher;
     }
     catch (e) {

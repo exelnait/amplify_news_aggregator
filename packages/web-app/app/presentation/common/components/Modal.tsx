@@ -1,14 +1,17 @@
 import React, { useState, Fragment, PropsWithChildren } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { Loader } from '@aws-amplify/ui-react';
 
 export interface IModalProps {
   title?: string;
   isOpen: boolean;
+  isLoading: boolean;
   onClose: () => void;
 }
 
 export function Modal({
   isOpen,
+  isLoading,
   onClose,
   title,
   children,
@@ -29,7 +32,12 @@ export function Modal({
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="flex min-h-full items-center justify-center p-4 text-center relative">
+            {isLoading && (
+              <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-full z-50 overflow-hidden bg-gray-700 opacity-30 flex flex-col items-center justify-center">
+                <Loader />
+              </div>
+            )}
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

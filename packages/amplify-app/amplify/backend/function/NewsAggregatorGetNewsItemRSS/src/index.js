@@ -498,7 +498,7 @@ function convertHtmlToText(html) {
 }
 
 function normalizeNewsItemFromRSS(item, options = {
-    needToNormalizeContent: false
+    needToNormalizeContent: false,
 }) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -510,7 +510,7 @@ function normalizeNewsItemFromRSS(item, options = {
             const scrapedArticle = null;
             const parsedArticle = yield parseArticle(item.rss.url);
             const parsingTime = perf_hooks.performance.now();
-            console.log(`Parsing time: ${parsingTime - startTime}ms`);
+            console.log(`Parsing time: ${perf_hooks.performance.now() - startTime}ms`);
             // console.log('scrapedArticle', JSON.stringify(scrapedArticle, null, 2));
             // console.log('parsedArticle', JSON.stringify(parsedArticle, null, 2));
             const coverUrl = parsedArticle.lead_image_url || (scrapedArticle === null || scrapedArticle === void 0 ? void 0 : scrapedArticle.top_image);
@@ -520,17 +520,27 @@ function normalizeNewsItemFromRSS(item, options = {
             }
             const normalizeContentTime = perf_hooks.performance.now();
             const domain = getDomain(item.rss.url);
-            const normalizedHtml = normalizeHtml({ html: parsedArticle.content, domain, coverUrl: item.rss.coverUrl });
+            const normalizedHtml = normalizeHtml({
+                html: parsedArticle.content,
+                domain,
+                coverUrl: item.rss.coverUrl,
+            });
             const htmlJson = yield convertHtmlToJson(normalizedHtml, {
-                requestImageDimensions: true
+                requestImageDimensions: true,
             });
             item.rss.contentHtml = normalizedHtml;
             item.rss.contentJson = JSON.stringify(htmlJson);
-            item.rss.contentText = (scrapedArticle === null || scrapedArticle === void 0 ? void 0 : scrapedArticle.text) || parsedArticle.content ? convertHtmlToText(normalizedHtml) : null;
+            item.rss.contentText =
+                (scrapedArticle === null || scrapedArticle === void 0 ? void 0 : scrapedArticle.text) || parsedArticle.content
+                    ? convertHtmlToText(normalizedHtml)
+                    : null;
             item.rss.isScraped = true;
             console.log(`Normalize content time: ${normalizeContentTime - parsingTime}ms`);
-            item.rss.wordsCount = item.rss.contentText + "" ? parsedArticle.word_count : 0;
-            item.rss.readingDurationInMilliseconds = parsedArticle.word_count ? calculateReadingTimeInMillisecondsByWordsCount(parsedArticle.word_count) : 0;
+            item.rss.wordsCount =
+                item.rss.contentText + '' ? parsedArticle.word_count : 0;
+            item.rss.readingDurationInMilliseconds = parsedArticle.word_count
+                ? calculateReadingTimeInMillisecondsByWordsCount(parsedArticle.word_count)
+                : 0;
             //NLP
             // item.rss.keywords = scrapedArticle.keywords
             // item.rss.summary = scrapedArticle.summary

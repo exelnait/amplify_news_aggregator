@@ -14,9 +14,9 @@ class PostMediumBlock extends PostBlock {
   const PostMediumBlock({
     required super.id,
     required super.category,
-    required String super.imageUrl,
     required super.title,
     required super.publishedAt,
+    super.imageUrl,
     super.author,
     super.description,
     super.action,

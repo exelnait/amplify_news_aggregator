@@ -10,21 +10,23 @@ import 'package:news_aggregator/ui/app_ui.dart';
 
 class AppBackButton extends StatelessWidget {
   /// Creates a default instance of [AppBackButton].
-  const AppBackButton({Key? key}) : this._(key: key, isLight: false);
+  const AppBackButton({Key? key, onTap}) : this._(key: key, isLight: false, onTap: onTap);
 
   /// Creates a light instance of [AppBackButton].
-  const AppBackButton.light({Key? key}) : this._(key: key, isLight: true);
+  const AppBackButton.light({Key? key, onTap}) : this._(key: key, isLight: true, onTap: onTap);
 
   /// {@macro app_back_button}
-  const AppBackButton._({super.key, required this.isLight});
+  const AppBackButton._({super.key, required this.isLight, required this.onTap});
 
   /// Whether this app button is light.
   final bool isLight;
 
+  final void Function() onTap;
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () => context.pop(),
+      onPressed: onTap,
       icon: Assets.icons.backIcon.svg(
         color: isLight ? AppColors.white : AppColors.highEmphasisSurface,
       ),

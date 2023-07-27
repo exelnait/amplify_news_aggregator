@@ -11,8 +11,8 @@ class PostMediumDescriptionLayout extends StatelessWidget {
   const PostMediumDescriptionLayout({
     super.key,
     required this.title,
-    required this.imageUrl,
     required this.publishedAt,
+    this.imageUrl,
     this.description,
     this.author,
     this.onShare,
@@ -34,7 +34,7 @@ class PostMediumDescriptionLayout extends StatelessWidget {
   final VoidCallback? onShare;
 
   /// The url of this post image.
-  final String imageUrl;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +55,10 @@ class PostMediumDescriptionLayout extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: InlineImage(imageUrl: imageUrl),
-              ),
+              if (imageUrl != null)
+                Expanded(
+                  child: InlineImage(imageUrl: imageUrl!),
+                )
             ],
           ),
           Text(

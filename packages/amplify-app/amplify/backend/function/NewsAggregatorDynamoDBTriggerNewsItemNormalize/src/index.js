@@ -78,11 +78,6 @@ var ModelAttributeTypes;
     ModelAttributeTypes["stringSet"] = "stringSet";
     ModelAttributeTypes["_null"] = "_null";
 })(ModelAttributeTypes || (ModelAttributeTypes = {}));
-var ModelSortDirection;
-(function (ModelSortDirection) {
-    ModelSortDirection["ASC"] = "ASC";
-    ModelSortDirection["DESC"] = "DESC";
-})(ModelSortDirection || (ModelSortDirection = {}));
 var SearchableNewsItemSortableFields;
 (function (SearchableNewsItemSortableFields) {
     SearchableNewsItemSortableFields["id"] = "id";
@@ -123,6 +118,11 @@ var SearchableNewsItemAggregateField;
     SearchableNewsItemAggregateField["topicID"] = "topicID";
     SearchableNewsItemAggregateField["creatorID"] = "creatorID";
 })(SearchableNewsItemAggregateField || (SearchableNewsItemAggregateField = {}));
+var ModelSortDirection;
+(function (ModelSortDirection) {
+    ModelSortDirection["ASC"] = "ASC";
+    ModelSortDirection["DESC"] = "DESC";
+})(ModelSortDirection || (ModelSortDirection = {}));
 
 const marshallOptions = {
     // Whether to automatically convert empty strings, blobs, and sets to `null`.
@@ -551,7 +551,7 @@ function convertHtmlToText(html) {
 }
 
 function normalizeNewsItemFromRSS(item, options = {
-    needToNormalizeContent: false
+    needToNormalizeContent: false,
 }) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -563,7 +563,7 @@ function normalizeNewsItemFromRSS(item, options = {
             const scrapedArticle = null;
             const parsedArticle = yield parseArticle(item.rss.url);
             const parsingTime = perf_hooks.performance.now();
-            console.log(`Parsing time: ${parsingTime - startTime}ms`);
+            console.log(`Parsing time: ${perf_hooks.performance.now() - startTime}ms`);
             // console.log('scrapedArticle', JSON.stringify(scrapedArticle, null, 2));
             // console.log('parsedArticle', JSON.stringify(parsedArticle, null, 2));
             const coverUrl = parsedArticle.lead_image_url || (scrapedArticle === null || scrapedArticle === void 0 ? void 0 : scrapedArticle.top_image);
@@ -573,17 +573,27 @@ function normalizeNewsItemFromRSS(item, options = {
             }
             const normalizeContentTime = perf_hooks.performance.now();
             const domain = getDomain(item.rss.url);
-            const normalizedHtml = normalizeHtml({ html: parsedArticle.content, domain, coverUrl: item.rss.coverUrl });
+            const normalizedHtml = normalizeHtml({
+                html: parsedArticle.content,
+                domain,
+                coverUrl: item.rss.coverUrl,
+            });
             const htmlJson = yield convertHtmlToJson(normalizedHtml, {
-                requestImageDimensions: true
+                requestImageDimensions: true,
             });
             item.rss.contentHtml = normalizedHtml;
             item.rss.contentJson = JSON.stringify(htmlJson);
-            item.rss.contentText = (scrapedArticle === null || scrapedArticle === void 0 ? void 0 : scrapedArticle.text) || parsedArticle.content ? convertHtmlToText(normalizedHtml) : null;
+            item.rss.contentText =
+                (scrapedArticle === null || scrapedArticle === void 0 ? void 0 : scrapedArticle.text) || parsedArticle.content
+                    ? convertHtmlToText(normalizedHtml)
+                    : null;
             item.rss.isScraped = true;
             console.log(`Normalize content time: ${normalizeContentTime - parsingTime}ms`);
-            item.rss.wordsCount = item.rss.contentText + "" ? parsedArticle.word_count : 0;
-            item.rss.readingDurationInMilliseconds = parsedArticle.word_count ? calculateReadingTimeInMillisecondsByWordsCount(parsedArticle.word_count) : 0;
+            item.rss.wordsCount =
+                item.rss.contentText + '' ? parsedArticle.word_count : 0;
+            item.rss.readingDurationInMilliseconds = parsedArticle.word_count
+                ? calculateReadingTimeInMillisecondsByWordsCount(parsedArticle.word_count)
+                : 0;
             //NLP
             // item.rss.keywords = scrapedArticle.keywords
             // item.rss.summary = scrapedArticle.summary
@@ -633,9 +643,9 @@ function createPicture(input) {
 const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
     const batchItemFailures = [];
     const updatedNewsItems = [];
-    console.log("Records Count: " + event.Records.length);
+    console.log('Records Count: ' + event.Records.length);
     for (const record of event.Records) {
-        if (record.eventName == "INSERT") {
+        if (record.eventName == 'INSERT') {
             console.log('DynamoDB Record: %j', record.dynamodb);
             const newsItem = utilDynamodb.unmarshall(record.dynamodb.NewImage);
             try {
@@ -649,27 +659,27 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
             }
             catch (e) {
                 const curRecordSequenceNumber = record.dynamodb.SequenceNumber;
-                batchItemFailures.push({ "itemIdentifier": curRecordSequenceNumber });
+                batchItemFailures.push({ itemIdentifier: curRecordSequenceNumber });
             }
         }
     }
     yield Promise.all([
         ...updatedNewsItems.map(updateNewsItem),
-        ...updatedNewsItems.filter(item => !!item.coverID).map(createCover)
+        ...updatedNewsItems.filter((item) => !!item.coverID).map(createCover),
     ]);
-    return { "batchItemFailures": batchItemFailures };
+    return { batchItemFailures: batchItemFailures };
 });
 function createCover(item) {
     return __awaiter(this, void 0, void 0, function* () {
         const coverFile = yield saveFileByUrl({
             url: item.rss.coverUrl,
-            key: `public/news/rss/${item.id}/cover`,
+            key: `public/news/${item.type.toLowerCase()}/${item.id}/cover`,
         });
         yield createPicture({
             id: item.coverID,
             type: PictureType.COVER,
             bucket: coverFile.bucket,
-            key: coverFile.key
+            key: coverFile.key,
         });
     });
 }

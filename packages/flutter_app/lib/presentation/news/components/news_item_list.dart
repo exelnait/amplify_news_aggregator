@@ -65,14 +65,14 @@ class NewsCardsList extends HookWidget {
               //   ),
 
               // When nothing else to load
-              if (!hasMore)
-                Container(
-                  padding: const EdgeInsets.only(top: 30, bottom: 40),
-                  color: Colors.amber,
-                  child: const Center(
-                    child: Text('You have fetched all of the content'),
-                  ),
-                ),
+              // if (!hasMore)
+              //   Container(
+              //     padding: const EdgeInsets.only(top: 10, bottom: 10),
+              //     color: Colors.grey,
+              //     child: const Center(
+              //       child: Text('You have fetched all of the content'),
+              //     ),
+              //   ),
             ],
           );
   }
