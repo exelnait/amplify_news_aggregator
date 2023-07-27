@@ -1635,7 +1635,7 @@ export type CreatePublisherMutation = { __typename?: 'Mutation', createPublisher
 export type ListPublishersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ListPublishersQuery = { __typename?: 'Query', myUser: { __typename?: 'User', topics?: { __typename?: 'ModelTopicConnection', items: Array<{ __typename?: 'Topic', id: string, title: string, publishers?: { __typename?: 'ModelPublisherConnection', items: Array<{ __typename?: 'Publisher', id: string, title: string, avatar: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } } | null> } | null } | null> } | null } };
+export type ListPublishersQuery = { __typename?: 'Query', myUser: { __typename?: 'User', id: string, topics?: { __typename?: 'ModelTopicConnection', items: Array<{ __typename?: 'Topic', id: string, title: string, publishers?: { __typename?: 'ModelPublisherConnection', items: Array<{ __typename?: 'Publisher', id: string, title: string, avatar: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } } | null> } | null } | null> } | null } };
 
 export type BaseTopicFragment = { __typename?: 'Topic', id: string, title: string };
 
@@ -1776,6 +1776,7 @@ export type CreatePublisherMutationOptions = Apollo.BaseMutationOptions<CreatePu
 export const ListPublishersDocument = gql`
     query ListPublishers {
   myUser {
+    ...BaseUser
     topics {
       items {
         ...BaseTopic
@@ -1788,7 +1789,8 @@ export const ListPublishersDocument = gql`
     }
   }
 }
-    ${BaseTopicFragmentDoc}
+    ${BaseUserFragmentDoc}
+${BaseTopicFragmentDoc}
 ${PublisherInfoFragmentDoc}`;
 
 /**

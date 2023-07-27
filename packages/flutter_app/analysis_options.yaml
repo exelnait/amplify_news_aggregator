@@ -8,6 +8,7 @@ analyzer:
     - lib/models/*.dart
     - lib/**/*.graphql.dart
     - lib/**/*.g.dart
+    - ios/.symlinks
     #  enable-experiment:
     #  - nonfunction-type-aliases
   errors:

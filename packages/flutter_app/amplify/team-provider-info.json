@@ -9,7 +9,8 @@
       "UnauthRoleName": "amplify-newsaggregator-dev-123111-unauthRole",
       "StackName": "amplify-newsaggregator-dev-123111",
       "StackId": "arn:aws:cloudformation:eu-central-1:981704123805:stack/amplify-newsaggregator-dev-123111/611b6fa0-2ad6-11ee-a9ac-062800af1b86",
-      "AmplifyAppId": "d29hoxfyo0vdci"
+      "AmplifyAppId": "d29hoxfyo0vdci",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-newsaggregator-dev-123111-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     }
   }
 }

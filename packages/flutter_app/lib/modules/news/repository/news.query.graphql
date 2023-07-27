@@ -1,7 +1,0 @@
-#import '../../news/models/graphql/news_item_full.fragment.graphql'
-
-query GetNewsItemRSS($id: String!) {
-    getNewsItemRSS(input: {id: $id}) {
-        ...NewsItemFull
-    }
-}

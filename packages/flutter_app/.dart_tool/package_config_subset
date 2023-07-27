@@ -26,6 +26,10 @@ amplify_auth_cognito_dart
 3.0
 file:///Users/timofey/.pub-cache/hosted/pub.dev/amplify_auth_cognito_dart-0.10.1+1/
 file:///Users/timofey/.pub-cache/hosted/pub.dev/amplify_auth_cognito_dart-0.10.1+1/lib/
+amplify_authenticator
+3.0
+file:///Users/timofey/.pub-cache/hosted/pub.dev/amplify_authenticator-1.2.1/
+file:///Users/timofey/.pub-cache/hosted/pub.dev/amplify_authenticator-1.2.1/lib/
 amplify_core
 3.0
 file:///Users/timofey/.pub-cache/hosted/pub.dev/amplify_core-1.2.1/
@@ -78,10 +82,6 @@ aws_signature_v4
 3.0
 file:///Users/timofey/.pub-cache/hosted/pub.dev/aws_signature_v4-0.4.0+2/
 file:///Users/timofey/.pub-cache/hosted/pub.dev/aws_signature_v4-0.4.0+2/lib/
-beamer
-2.12
-file:///Users/timofey/.pub-cache/hosted/pub.dev/beamer-1.5.3/
-file:///Users/timofey/.pub-cache/hosted/pub.dev/beamer-1.5.3/lib/
 bloc
 2.12
 file:///Users/timofey/.pub-cache/hosted/pub.dev/bloc-8.1.0/
@@ -314,6 +314,10 @@ glob
 2.15
 file:///Users/timofey/.pub-cache/hosted/pub.dev/glob-2.1.1/
 file:///Users/timofey/.pub-cache/hosted/pub.dev/glob-2.1.1/lib/
+go_router
+2.18
+file:///Users/timofey/.pub-cache/hosted/pub.dev/go_router-10.0.0/
+file:///Users/timofey/.pub-cache/hosted/pub.dev/go_router-10.0.0/lib/
 gql
 2.12
 file:///Users/timofey/.pub-cache/hosted/pub.dev/gql-1.0.1-alpha+1690125199407/
@@ -400,8 +404,8 @@ file:///Users/timofey/.pub-cache/hosted/pub.dev/injectable_generator-2.1.3/
 file:///Users/timofey/.pub-cache/hosted/pub.dev/injectable_generator-2.1.3/lib/
 intl
 2.12
-file:///Users/timofey/.pub-cache/hosted/pub.dev/intl-0.18.1/
-file:///Users/timofey/.pub-cache/hosted/pub.dev/intl-0.18.1/lib/
+file:///Users/timofey/.pub-cache/hosted/pub.dev/intl-0.18.0/
+file:///Users/timofey/.pub-cache/hosted/pub.dev/intl-0.18.0/lib/
 introduction_screen
 2.12
 file:///Users/timofey/.pub-cache/hosted/pub.dev/introduction_screen-3.1.4/
@@ -582,6 +586,10 @@ rxdart
 2.12
 file:///Users/timofey/.pub-cache/hosted/pub.dev/rxdart-0.27.7/
 file:///Users/timofey/.pub-cache/hosted/pub.dev/rxdart-0.27.7/lib/
+searchable_listview
+2.12
+file:///Users/timofey/.pub-cache/hosted/pub.dev/searchable_listview-2.4.0/
+file:///Users/timofey/.pub-cache/hosted/pub.dev/searchable_listview-2.4.0/lib/
 share_plus
 2.18
 file:///Users/timofey/.pub-cache/hosted/pub.dev/share_plus-7.0.2/
@@ -834,6 +842,10 @@ flutter
 3.0
 file:///opt/homebrew/Caskroom/flutter/2.8.1/flutter/packages/flutter/
 file:///opt/homebrew/Caskroom/flutter/2.8.1/flutter/packages/flutter/lib/
+flutter_localizations
+3.0
+file:///opt/homebrew/Caskroom/flutter/2.8.1/flutter/packages/flutter_localizations/
+file:///opt/homebrew/Caskroom/flutter/2.8.1/flutter/packages/flutter_localizations/lib/
 flutter_test
 3.0
 file:///opt/homebrew/Caskroom/flutter/2.8.1/flutter/packages/flutter_test/

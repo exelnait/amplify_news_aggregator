@@ -406,6 +406,7 @@ const handler = (event) => __awaiter(void 0, void 0, void 0, function* () {
                 twitter: source.twitter,
                 youtube: source.youtube,
                 itunes: source.itunes,
+                creatorID: currentUserID,
             };
         })));
         if (websiteUrl) {

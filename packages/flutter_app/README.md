@@ -1,6 +1,6 @@
 # apps
 
-Informer Mobile App
+NewsAggregator Mobile App
 
 ## Getting Started
 

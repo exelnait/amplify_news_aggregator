@@ -1,0 +1,47 @@
+query GetNewsItemRSS($id: String!) {
+    getNewsItemRSS(input: {id: $id}) {
+        ...NewsItemFull
+    }
+}
+
+query GetUserNewsFeed($nextToken: String) {
+    myUser {
+        news(limit: 100, sortDirection: DESC, nextToken: $nextToken) {
+            items {
+                ...NewsItemFull
+            }
+            nextToken
+        }
+    }
+}
+
+query GetPublisherWithNewsFeed($publisherID: ID!, $nextToken: String) {
+    getPublisher(id: $publisherID) {
+        ...PublisherInfo
+        sources {
+            items {
+                ...PublisherSourceBase
+            }
+        }
+        news(limit: 100, sortDirection: DESC, nextToken: $nextToken) {
+            items {
+                ...NewsItemFull
+            }
+            nextToken
+        }
+    }
+}
+
+query GetPublisherNewsFeedByType($publisherID: ID!, $type: String!, $nextToken: String) {
+    searchNewsItems(
+        filter: {publisherID: {eq: $publisherID}, type: {eq: $type}},
+        sort: {direction: desc, field: publishedAt},
+        limit: 100,
+        nextToken: $nextToken
+    ) {
+        items {
+            ...NewsItemFull
+        }
+        nextToken
+    }
+}

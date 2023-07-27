@@ -5,6 +5,7 @@ import { CreatePublisher } from '../../../../ui-components';
 import { SourceType } from '../../../graphql/schema';
 
 interface IProps extends IModalProps {
+  topicTitle: string;
   onSubmit: (data: CreatePublisherFormData) => void;
 }
 
@@ -19,7 +20,12 @@ export interface CreatePublisherFormData {
   sources: PublisherSourceFormData[];
 }
 
-export function CreatePublisherModal({ isOpen, onClose, onSubmit }: IProps) {
+export function CreatePublisherModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  topicTitle,
+}: IProps) {
   const handleSubmit = useCallback((fields) => {
     const sources = fields.Field0.map((url) => {
       if (url.includes('.xml')) {
@@ -46,7 +52,11 @@ export function CreatePublisherModal({ isOpen, onClose, onSubmit }: IProps) {
     });
   }, []);
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Add new publisher">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={`Add a new publisher to topic "${topicTitle}"`}
+    >
       <CreatePublisher onSubmit={handleSubmit} onCancel={onClose} />
     </Modal>
   );

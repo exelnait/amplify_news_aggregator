@@ -44,6 +44,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "amplify_authenticator",
+      "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/amplify_authenticator-1.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "amplify_core",
       "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/amplify_core-1.2.1",
       "packageUri": "lib/",
@@ -120,12 +126,6 @@
       "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/aws_signature_v4-0.4.0+2",
       "packageUri": "lib/",
       "languageVersion": "3.0"
-    },
-    {
-      "name": "beamer",
-      "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/beamer-1.5.3",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
     },
     {
       "name": "bloc",
@@ -440,6 +440,12 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "flutter_localizations",
+      "rootUri": "file:///opt/homebrew/Caskroom/flutter/2.8.1/flutter/packages/flutter_localizations",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "flutter_svg",
       "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/flutter_svg-1.1.6",
       "packageUri": "lib/",
@@ -492,6 +498,12 @@
       "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/glob-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.15"
+    },
+    {
+      "name": "go_router",
+      "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/go_router-10.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
     },
     {
       "name": "gql",
@@ -621,7 +633,7 @@
     },
     {
       "name": "intl",
-      "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/intl-0.18.1",
+      "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/intl-0.18.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -892,6 +904,12 @@
     {
       "name": "rxdart",
       "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/rxdart-0.27.7",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "searchable_listview",
+      "rootUri": "file:///Users/timofey/.pub-cache/hosted/pub.dev/searchable_listview-2.4.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -1268,7 +1286,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2023-07-25T17:24:50.136357Z",
+  "generated": "2023-07-27T12:31:21.166264Z",
   "generator": "pub",
   "generatorVersion": "3.0.3"
 }

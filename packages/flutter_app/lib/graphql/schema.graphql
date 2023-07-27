@@ -3,6 +3,7 @@ input GetNewsItemRSSInput {
 }
 
 type Query {
+  myUser: User!
   getNewsItemRSS(input: GetNewsItemRSSInput!): NewsItem
   searchNewsItems(filter: SearchableNewsItemFilterInput, sort: [SearchableNewsItemSortInput], limit: Int, nextToken: String, from: Int, aggregates: [SearchableNewsItemAggregationInput]): SearchableNewsItemConnection
   getTopic(id: ID!): Topic
@@ -17,12 +18,16 @@ type Query {
   listPublishers(filter: ModelPublisherFilterInput, limit: Int, nextToken: String): ModelPublisherConnection
   getUser(id: ID!): User
   listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
+  topicsByCreatorID(creatorID: ID!, sortDirection: ModelSortDirection, filter: ModelTopicFilterInput, limit: Int, nextToken: String): ModelTopicConnection
   newsItemsByPublisherIDAndPublishedAt(publisherID: ID!, publishedAt: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelNewsItemFilterInput, limit: Int, nextToken: String): ModelNewsItemConnection
   newsItemsByTopicIDAndPublishedAt(topicID: ID!, publishedAt: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelNewsItemFilterInput, limit: Int, nextToken: String): ModelNewsItemConnection
+  newsItemsByCreatorIDAndPublishedAt(creatorID: ID!, publishedAt: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelNewsItemFilterInput, limit: Int, nextToken: String): ModelNewsItemConnection
   publisherSourcesByType(type: String!, sortDirection: ModelSortDirection, filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
   publisherSourcesByPublisherTopicID(publisherTopicID: ID!, sortDirection: ModelSortDirection, filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
   publisherSourcesByPublisherIDAndType(publisherID: ID!, type: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
+  publisherSourcesByCreatorID(creatorID: ID!, sortDirection: ModelSortDirection, filter: ModelPublisherSourceFilterInput, limit: Int, nextToken: String): ModelPublisherSourceConnection
   publishersByTopicID(topicID: ID!, sortDirection: ModelSortDirection, filter: ModelPublisherFilterInput, limit: Int, nextToken: String): ModelPublisherConnection
+  publishersByCreatorID(creatorID: ID!, sortDirection: ModelSortDirection, filter: ModelPublisherFilterInput, limit: Int, nextToken: String): ModelPublisherConnection
   getUserByUserName(userName: String!, sortDirection: ModelSortDirection, filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
 }
 
@@ -33,6 +38,7 @@ input CreatePublisherSourceRSSInput {
 input CreatePublisherSourceYoutubeInput {
   username: String
   channelID: String
+  url: String
 }
 
 input CreatePublisherSourceTwitterInput {
@@ -48,7 +54,7 @@ input CreatePublisherSourceCustomInput {
 }
 
 input CreatePublisherCustomInput {
-  title: String
+  title: String!
   description: String
   avatarUrl: String
   coverUrl: String
@@ -88,22 +94,14 @@ enum SourceType {
   WEBSITE
 }
 
-enum TopicType {
-  GAMING
-  TECH
-  DEV
-  CUSTOM
-}
-
 type Topic {
   id: ID!
   title: String!
-  description: String!
-  type: TopicType!
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   publishers(filter: ModelPublisherFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelPublisherConnection
   news(publishedAt: ModelStringKeyConditionInput, filter: ModelNewsItemFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelNewsItemConnection
+  creatorID: ID!
 }
 
 type Picture {
@@ -173,7 +171,7 @@ type NewsItem {
   title: String!
   description: String!
   publishedAt: AWSDateTime!
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime
   coverID: ID
   cover: Picture
@@ -181,10 +179,10 @@ type NewsItem {
   publisher: Publisher!
   topicID: ID!
   topic: Topic!
+  creatorID: ID!
   rss: NewsItemDataRSS
   youtube: NewsItemDataYouTube
   itunes: NewsItemDataITunes
-  viewsCount: Int!
 }
 
 type PublisherSourceWebsite {
@@ -221,6 +219,7 @@ type PublisherSource {
   youtube: PublisherSourceYouTube
   twitter: PublisherSourceTwitter
   itunes: PublisherSourceITunes
+  creatorID: ID!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
 }
@@ -229,7 +228,7 @@ type Publisher {
   id: ID!
   title: String!
   description: String!
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime
   topicID: ID!
   topic: Topic!
@@ -239,6 +238,7 @@ type Publisher {
   coverID: ID
   cover: Picture
   news(publishedAt: ModelStringKeyConditionInput, filter: ModelNewsItemFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelNewsItemConnection
+  creatorID: ID!
 }
 
 type User {
@@ -247,6 +247,9 @@ type User {
   email: String!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime!
+  publishers(filter: ModelPublisherFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelPublisherConnection
+  topics(filter: ModelTopicFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelTopicConnection
+  news(publishedAt: ModelStringKeyConditionInput, filter: ModelNewsItemFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelNewsItemConnection
 }
 
 type SearchableNewsItemConnection {
@@ -431,18 +434,12 @@ type ModelTopicConnection {
   nextToken: String
 }
 
-input ModelTopicTypeInput {
-  eq: TopicType
-  ne: TopicType
-}
-
 input ModelTopicFilterInput {
   id: ModelIDInput
   title: ModelStringInput
-  description: ModelStringInput
-  type: ModelTopicTypeInput
   createdAt: ModelStringInput
   updatedAt: ModelStringInput
+  creatorID: ModelIDInput
   and: [ModelTopicFilterInput]
   or: [ModelTopicFilterInput]
   not: ModelTopicFilterInput
@@ -450,10 +447,9 @@ input ModelTopicFilterInput {
 
 input ModelTopicConditionInput {
   title: ModelStringInput
-  description: ModelStringInput
-  type: ModelTopicTypeInput
   createdAt: ModelStringInput
   updatedAt: ModelStringInput
+  creatorID: ModelIDInput
   and: [ModelTopicConditionInput]
   or: [ModelTopicConditionInput]
   not: ModelTopicConditionInput
@@ -462,19 +458,17 @@ input ModelTopicConditionInput {
 input CreateTopicInput {
   id: ID
   title: String!
-  description: String!
-  type: TopicType!
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
+  creatorID: ID!
 }
 
 input UpdateTopicInput {
   id: ID!
   title: String
-  description: String
-  type: TopicType
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
+  creatorID: ID
 }
 
 input DeleteTopicInput {
@@ -484,10 +478,9 @@ input DeleteTopicInput {
 input ModelSubscriptionTopicFilterInput {
   id: ModelSubscriptionIDInput
   title: ModelSubscriptionStringInput
-  description: ModelSubscriptionStringInput
-  type: ModelSubscriptionStringInput
   createdAt: ModelSubscriptionStringInput
   updatedAt: ModelSubscriptionStringInput
+  creatorID: ModelSubscriptionIDInput
   and: [ModelSubscriptionTopicFilterInput]
   or: [ModelSubscriptionTopicFilterInput]
 }
@@ -638,7 +631,7 @@ input ModelNewsItemFilterInput {
   coverID: ModelIDInput
   publisherID: ModelIDInput
   topicID: ModelIDInput
-  viewsCount: ModelIntInput
+  creatorID: ModelIDInput
   and: [ModelNewsItemFilterInput]
   or: [ModelNewsItemFilterInput]
   not: ModelNewsItemFilterInput
@@ -653,7 +646,7 @@ input ModelNewsItemConditionInput {
   coverID: ModelIDInput
   publisherID: ModelIDInput
   topicID: ModelIDInput
-  viewsCount: ModelIntInput
+  creatorID: ModelIDInput
   and: [ModelNewsItemConditionInput]
   or: [ModelNewsItemConditionInput]
   not: ModelNewsItemConditionInput
@@ -670,10 +663,10 @@ input CreateNewsItemInput {
   coverID: ID
   publisherID: ID!
   topicID: ID!
+  creatorID: ID!
   rss: NewsItemDataRSSInput
   youtube: NewsItemDataYouTubeInput
   itunes: NewsItemDataITunesInput
-  viewsCount: Int!
 }
 
 input UpdateNewsItemInput {
@@ -687,10 +680,10 @@ input UpdateNewsItemInput {
   coverID: ID
   publisherID: ID
   topicID: ID
+  creatorID: ID
   rss: NewsItemDataRSSInput
   youtube: NewsItemDataYouTubeInput
   itunes: NewsItemDataITunesInput
-  viewsCount: Int
 }
 
 input DeleteNewsItemInput {
@@ -709,7 +702,7 @@ input ModelSubscriptionNewsItemFilterInput {
   coverID: ModelSubscriptionIDInput
   publisherID: ModelSubscriptionIDInput
   topicID: ModelSubscriptionIDInput
-  viewsCount: ModelSubscriptionIntInput
+  creatorID: ModelSubscriptionIDInput
   and: [ModelSubscriptionNewsItemFilterInput]
   or: [ModelSubscriptionNewsItemFilterInput]
 }
@@ -748,6 +741,7 @@ input ModelPublisherSourceFilterInput {
   isHidden: ModelBooleanInput
   publisherTopicID: ModelIDInput
   publisherID: ModelIDInput
+  creatorID: ModelIDInput
   and: [ModelPublisherSourceFilterInput]
   or: [ModelPublisherSourceFilterInput]
   not: ModelPublisherSourceFilterInput
@@ -759,6 +753,7 @@ input ModelPublisherSourceConditionInput {
   isHidden: ModelBooleanInput
   publisherTopicID: ModelIDInput
   publisherID: ModelIDInput
+  creatorID: ModelIDInput
   and: [ModelPublisherSourceConditionInput]
   or: [ModelPublisherSourceConditionInput]
   not: ModelPublisherSourceConditionInput
@@ -776,6 +771,7 @@ input CreatePublisherSourceInput {
   youtube: PublisherSourceYouTubeInput
   twitter: PublisherSourceTwitterInput
   itunes: PublisherSourceITunesInput
+  creatorID: ID!
 }
 
 input UpdatePublisherSourceInput {
@@ -790,6 +786,7 @@ input UpdatePublisherSourceInput {
   youtube: PublisherSourceYouTubeInput
   twitter: PublisherSourceTwitterInput
   itunes: PublisherSourceITunesInput
+  creatorID: ID
 }
 
 input DeletePublisherSourceInput {
@@ -803,6 +800,7 @@ input ModelSubscriptionPublisherSourceFilterInput {
   isHidden: ModelSubscriptionBooleanInput
   publisherTopicID: ModelSubscriptionIDInput
   publisherID: ModelSubscriptionIDInput
+  creatorID: ModelSubscriptionIDInput
   and: [ModelSubscriptionPublisherSourceFilterInput]
   or: [ModelSubscriptionPublisherSourceFilterInput]
 }
@@ -821,6 +819,7 @@ input ModelPublisherFilterInput {
   topicID: ModelIDInput
   avatarID: ModelIDInput
   coverID: ModelIDInput
+  creatorID: ModelIDInput
   and: [ModelPublisherFilterInput]
   or: [ModelPublisherFilterInput]
   not: ModelPublisherFilterInput
@@ -834,6 +833,7 @@ input ModelPublisherConditionInput {
   topicID: ModelIDInput
   avatarID: ModelIDInput
   coverID: ModelIDInput
+  creatorID: ModelIDInput
   and: [ModelPublisherConditionInput]
   or: [ModelPublisherConditionInput]
   not: ModelPublisherConditionInput
@@ -848,6 +848,7 @@ input CreatePublisherInput {
   topicID: ID!
   avatarID: ID!
   coverID: ID
+  creatorID: ID!
 }
 
 input UpdatePublisherInput {
@@ -859,6 +860,7 @@ input UpdatePublisherInput {
   topicID: ID
   avatarID: ID
   coverID: ID
+  creatorID: ID
 }
 
 input DeletePublisherInput {
@@ -874,6 +876,7 @@ input ModelSubscriptionPublisherFilterInput {
   topicID: ModelSubscriptionIDInput
   avatarID: ModelSubscriptionIDInput
   coverID: ModelSubscriptionIDInput
+  creatorID: ModelSubscriptionIDInput
   and: [ModelSubscriptionPublisherFilterInput]
   or: [ModelSubscriptionPublisherFilterInput]
 }
@@ -1013,7 +1016,7 @@ input SearchableNewsItemFilterInput {
   coverID: SearchableIDFilterInput
   publisherID: SearchableIDFilterInput
   topicID: SearchableIDFilterInput
-  viewsCount: SearchableIntFilterInput
+  creatorID: SearchableIDFilterInput
   type: SearchableStringFilterInput
   and: [SearchableNewsItemFilterInput]
   or: [SearchableNewsItemFilterInput]
@@ -1035,7 +1038,7 @@ enum SearchableNewsItemSortableFields {
   coverID
   publisherID
   topicID
-  viewsCount
+  creatorID
 }
 
 input SearchableNewsItemSortInput {
@@ -1062,7 +1065,7 @@ enum SearchableNewsItemAggregateField {
   coverID
   publisherID
   topicID
-  viewsCount
+  creatorID
 }
 
 input SearchableNewsItemAggregationInput {

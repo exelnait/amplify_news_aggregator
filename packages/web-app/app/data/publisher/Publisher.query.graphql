@@ -1,5 +1,6 @@
 query ListPublishers {
     myUser {
+        ...BaseUser
         topics {
             items {
                 ...BaseTopic
