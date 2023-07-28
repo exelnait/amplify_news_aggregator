@@ -8,11 +8,11 @@ applications:
       phases:
         preBuild:
           commands:
-            - npm install -g nx
             - npm install --silent
         build:
           commands:
-            - nx build web-app
+            - cd packages/web-app
+            - npm run build
             - ls packages/web-app/.next
       artifacts:
         baseDirectory: packages/web-app/.next
