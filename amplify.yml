@@ -13,9 +13,9 @@ applications:
           commands:
             - cd packages/web-app
             - npm run build
-            - ls packages/web-app/.next
+            - ls packages/web-app
       artifacts:
-        baseDirectory: packages/web-app/.next
+        baseDirectory: packages/web-app/build
         files:
           - '**/*'
       cache:
