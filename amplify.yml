@@ -1,20 +1,24 @@
 version: 1
-backend:
-  phases:
-    build:
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm install -g nx
-        - npm install --silent
-    build:
-      commands:
-        - nx build web-app
-  artifacts:
-    baseDirectory: packages/web-app/.next
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
+applications:
+  - backend:
+      phases:
+        build:
+          commands:
+            - '# Execute Amplify CLI with the helper script'
+            - amplifyPush --simple
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm install -g nx
+            - npm install --silent
+        build:
+          commands:
+            - nx build web-app
+      artifacts:
+        baseDirectory: packages/web-app/.next
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
