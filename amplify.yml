@@ -6,7 +6,7 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        - npm install --silent
     build:
       commands:
         - nx build web-app
