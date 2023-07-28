@@ -8,13 +8,13 @@ applications:
       phases:
         preBuild:
           commands:
+            - npm i -g nx
             - npm install --silent
         build:
           commands:
-            - cd packages/web-app
-            - npm run build
+            - nx build web-app
       artifacts:
-        baseDirectory: build
+        baseDirectory: dist/packages/web-app/.next
         files:
           - '**/*'
       cache:
