@@ -13,7 +13,7 @@ applications:
         build:
           commands:
             - nx build web-app
-            - ls packages/web-app/
+            - ls packages/web-app/.next
       artifacts:
         baseDirectory: packages/web-app/.next
         files:
