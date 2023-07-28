@@ -13,10 +13,8 @@ applications:
           commands:
             - cd packages/web-app
             - npm run build
-            - ls
-            - ls packages/web-app
       artifacts:
-        baseDirectory: packages/web-app/build
+        baseDirectory: build
         files:
           - '**/*'
       cache:
