@@ -21,3 +21,5 @@ applications:
       cache:
         paths:
           - node_modules/**/*
+      buildPath: /
+    appRoot: packages/web-app
