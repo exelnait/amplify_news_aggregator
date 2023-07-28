@@ -90,6 +90,6 @@
     },
     "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"newsaggregator877980c6PostConfirmation\"\n  }\n]",
     "permissions": [],
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"myapp://\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"myapp://\"]}"
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:3000/\",\"myapp://\",\"https://main.d29hoxfyo0vdci.amplifyapp.com/\"],\"LogoutURLs\":[\"http://localhost:3000/\",\"myapp://\"]}"
   }
 }

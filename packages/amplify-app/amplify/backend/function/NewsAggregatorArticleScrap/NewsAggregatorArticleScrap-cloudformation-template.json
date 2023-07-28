@@ -84,7 +84,7 @@
             "Arn"
           ]
         },
-        "Runtime": "python3.7.15",
+        "Runtime": "python3.8",
         "Layers": [],
         "Timeout": 25
       }

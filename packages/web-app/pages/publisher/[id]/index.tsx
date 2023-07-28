@@ -1,25 +1,19 @@
-import { LoaderArgs } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { useRouter } from 'next/router';
 
 import { useGetPublisherNewsFeedQuery } from '../../../graphql/schema';
 import { NewsItemModel } from '../../../data/data';
 import { NewsCard } from '../../../presentation/news/components/NewsCard';
 import { PageLoader } from '../../../presentation/common/common.presentation';
 
-export const loader = async ({ params }: LoaderArgs) => {
-  return {
-    publisherId: params.id,
-  };
-};
-
 export default function NewsFeed() {
-  const { publisherId } = useLoaderData<typeof loader>();
+  const router = useRouter();
+  const { publisherId } = router.query;
   if (!publisherId) {
     throw new Error('No publisher id');
   }
   const { data, loading, error } = useGetPublisherNewsFeedQuery({
     variables: {
-      id: publisherId,
+      id: publisherId as string,
     },
   });
   const news =

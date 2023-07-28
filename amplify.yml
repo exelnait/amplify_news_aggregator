@@ -13,8 +13,9 @@ applications:
         build:
           commands:
             - nx build web-app
+            - cp dist/packages/web-app/public .
       artifacts:
-        baseDirectory: dist/packages/web-app
+        baseDirectory: dist/packages/web-app/.next
         files:
           - '**/*'
       cache:
