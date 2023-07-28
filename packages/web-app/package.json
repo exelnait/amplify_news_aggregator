@@ -1,0 +1,6 @@
+{
+  "name": "web-app",
+  "scripts": {
+    "build": "next build"
+  }
+}
