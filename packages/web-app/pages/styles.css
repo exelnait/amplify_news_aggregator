@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+div[data-amplify-authenticator] {
+  width: auto;
+  height: auto;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid-rows-header {
+  grid-template-rows: 64px auto;
+}
+.grid-cols-sidebar {
+  grid-template-columns: 300px auto;
+}

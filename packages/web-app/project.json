@@ -3,40 +3,66 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/web-app",
   "projectType": "application",
-  "tags": [],
   "targets": {
-    "build:graphql": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": ["graphql-codegen --config codegen.ts"],
-        "cwd": "packages/web-app",
-        "parallel": false
-      }
-    },
     "build": {
-      "command": "remix build",
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
       "options": {
-        "cwd": "packages/web-app"
+        "outputPath": "dist/packages/web-app"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "packages/web-app"
+        },
+        "production": {}
       }
     },
     "serve": {
-      "command": "remix dev",
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
       "options": {
-        "cwd": "packages/web-app"
+        "buildTarget": "web-app:build",
+        "dev": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "web-app:build:development",
+          "dev": true
+        },
+        "production": {
+          "buildTarget": "web-app:build:production",
+          "dev": false
+        }
       }
     },
-    "start": {
-      "dependsOn": ["build"],
-      "command": "remix-serve build",
+    "export": {
+      "executor": "@nx/next:export",
       "options": {
-        "cwd": "packages/web-app"
+        "buildTarget": "web-app:build:production"
       }
     },
-    "typecheck": {
-      "command": "tsc",
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "cwd": "packages/web-app"
+        "jestConfig": "packages/web-app/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/web-app/**/*.{ts,tsx,js,jsx}"]
       }
     }
-  }
+  },
+  "tags": []
 }
