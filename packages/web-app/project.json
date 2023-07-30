@@ -9,7 +9,6 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "generatePackageJson": true,
         "outputPath": "dist/packages/web-app"
       },
       "configurations": {
@@ -24,6 +23,7 @@
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "web-app:build",
+        "port":3000,
         "dev": true
       },
       "configurations": {

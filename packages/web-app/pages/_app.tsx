@@ -40,10 +40,31 @@ const updatedAwsConfig = {
   },
 };
 
+const components = {
+  Header() {
+    return (
+      <div className="mb-5 flex justify-center">
+        <Logo />
+      </div>
+    );
+  },
+  Footer() {
+    return (
+      <div className="mb-5 flex justify-center">
+        <HackathonLogo />
+      </div>
+    );
+  },
+};
+
 Amplify.configure({ ...updatedAwsConfig, ssr: true });
 
 import { apiClient } from '../graphql/client';
 import { MainLayout } from '../presentation/common/layout/Main.layout';
+import {
+  HackathonLogo,
+  Logo,
+} from '../presentation/common/common.presentation';
 
 function CustomApp({ Component, pageProps }: AppProps) {
   return (
@@ -54,7 +75,7 @@ function CustomApp({ Component, pageProps }: AppProps) {
       <main className="app">
         <ThemeProvider theme={studioTheme}>
           <ApolloProvider client={apiClient}>
-            <Authenticator socialProviders={['google']}>
+            <Authenticator socialProviders={['google']} components={components}>
               <MainLayout>
                 <Component {...pageProps} />
               </MainLayout>
