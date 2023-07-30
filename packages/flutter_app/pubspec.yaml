@@ -33,7 +33,6 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
 
-  amplify_api: ^1.2.0
   amplify_core: ^1.2.0
   amplify_flutter: ^1.2.0
   amplify_auth_cognito: ^1.2.0

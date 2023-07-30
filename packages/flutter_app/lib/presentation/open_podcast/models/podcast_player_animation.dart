@@ -46,7 +46,7 @@ class PodcastPlayerScreenAnimationMixinFields {
       PodcastPlayerScreenAnimationParams screenParams) {
     final audioImageWidth = screenParams.size.width;
     final audioImageHeight = getAudioImageHeight(audioImageWidth);
-    double audioContainerMarginBottom = screenParams.bottomBarHeight + 5;
+    double audioContainerMarginBottom = screenParams.bottomBarHeight + 25;
 
     final playerButtonsOpacityTween = Tween<double>(begin: 1, end: 0);
     final audioInfoOpacityTween = Tween<double>(begin: 0, end: 1);

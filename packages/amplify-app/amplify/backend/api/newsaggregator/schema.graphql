@@ -131,11 +131,6 @@ type NewsItemDataRSS {
 type NewsItemDataYouTube {
     videoId: String!
     coverUrl: String
-
-    # After scraping
-#    keywords: [String!]
-#    summary: String
-#    durationInMilliseconds: Int
 }
 
 type NewsItemDataITunes {

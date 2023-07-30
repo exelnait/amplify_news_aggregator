@@ -4,6 +4,7 @@ export 'news_block.dart';
 export 'post_block.dart';
 export 'post_medium_block.dart';
 export 'post_large_block.dart';
+export 'post_small_block.dart';
 
 //Article content
 export 'article_introduction_block.dart';

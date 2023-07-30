@@ -45,11 +45,11 @@ class CategoryFeedItem extends StatelessWidget {
         block: newsBlock,
         onPressed: (action) => _onFeedItemAction(context, action),
       );
-    // } else if (newsBlock is PostSmallBlock) {
-    //   return PostSmall(
-    //     block: newsBlock,
-    //     onPressed: (action) => _onFeedItemAction(context, action),
-    //   );
+    } else if (newsBlock is PostSmallBlock) {
+      return PostSmall(
+        block: newsBlock,
+        onPressed: (action) => _onFeedItemAction(context, action),
+      );
     // } else if (newsBlock is PostGridGroupBlock) {
     //   return PostGrid(
     //     gridGroupBlock: newsBlock,

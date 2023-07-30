@@ -15,6 +15,7 @@
     "amplify:newsaggregator877980c6PostConfirmation": "cd amplify/backend/function/newsaggregator877980c6PostConfirmation/src && npm run build",
     "build:functions": "amplify function build",
     "build:gql": "amplify api gql-compile && amplify codegen",
+
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

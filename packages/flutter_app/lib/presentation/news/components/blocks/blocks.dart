@@ -1,5 +1,6 @@
 export 'post_medium/index.dart';
 export 'post_large/index.dart';
+export 'post_small.dart';
 
 export 'widgets/inline_image.dart';
 export 'widgets/post_content.dart';

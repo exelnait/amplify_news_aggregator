@@ -26,7 +26,7 @@ class NewsItemModelPodcast
       String imageUrl = item.cover?.resized?.medium ?? item.itunes!.coverUrl ?? '';
       return NewsItemModelPodcast(
         type: item.type,
-          post: PostMediumBlock(
+          post: PostSmallBlock(
             id: item.id,
             category: category,
             publishedAt: item.publishedAt,

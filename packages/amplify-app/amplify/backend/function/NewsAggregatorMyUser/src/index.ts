@@ -8,7 +8,7 @@ import { GetNewsItemRSSQueryVariables, User } from '../../../../../src/API';
 
 export const handler: AppSyncResolverHandler<
   GetNewsItemRSSQueryVariables,
-  any,
+  User,
   any
 > = async (event) => {
   const userEmail = getUserEmailFromEventIdentity(event);

@@ -1,5 +1,7 @@
+import { redirect } from 'next/navigation';
+
 export function Index() {
-  return 'Index';
+  redirect('/feed');
 }
 
 export default Index;

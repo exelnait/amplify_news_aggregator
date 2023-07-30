@@ -34,8 +34,8 @@ class PostLarge extends StatelessWidget {
     return MaterialButton(
       onPressed: () =>
           block.hasNavigationAction ? onPressed?.call(block.action!) : null,
-      child: PostLargeContainer(
-        isContentOverlaid: block.isContentOverlaid,
+      child: Column(
+        // isContentOverlaid: block.isContentOverlaid,
         children: [
           PostLargeImage(
             isContentOverlaid: block.isContentOverlaid,

@@ -32,19 +32,29 @@ class NewsItemModelArticle
       parsedContent =
           decoded.map((item) => NewsContentChildren.fromJson(item)).toList();
     }
-    String category = item.rss!.categories?.first ?? 'No category';
-    String author = item.rss!.author ?? 'No Author';
+    var category = item.rss?.categories?.first ?? 'No category';
+    var author = item.rss?.author;
     String? imageUrl = item.cover?.resized?.medium ?? item.rss!.coverUrl;
+    var action = NavigateToArticleAction(articleId: item.id);
     return NewsItemModelArticle(
         type: item.type,
-        post: PostMediumBlock(
-            id: item.id,
-            category: category,
-            author: author,
-            publishedAt: item.publishedAt,
-            imageUrl: imageUrl,
-            title: item.title,
-            action: NavigateToArticleAction(articleId: item.id)),
+        post: item.title.length <= 50 && imageUrl != null
+            ? PostLargeBlock(
+                id: item.id,
+                category: category,
+                author: author,
+                publishedAt: item.publishedAt,
+                imageUrl: imageUrl,
+                title: item.title,
+                action: action)
+            : PostSmallBlock(
+                id: item.id,
+                category: category,
+                author: author,
+                publishedAt: item.publishedAt,
+                imageUrl: imageUrl,
+                title: item.title,
+                action: action),
         content: [
           ArticleIntroductionBlock(
             category: category,
@@ -73,7 +83,8 @@ List<NewsBlock> _convertArticleParsedJsonToBlocks(
     if (child.type == ArticleJsonChildType.paragraph &&
         child.children != null &&
         child.children!.isNotEmpty) {
-      if (child.children!.length == 1 && child.children![0].type ==  ArticleJsonChildType.text) {
+      if (child.children!.length == 1 &&
+          child.children![0].type == ArticleJsonChildType.text) {
         if (child.type == ArticleJsonChildType.linebreak) {
           blocks.add(const SpacerBlock(spacing: Spacing.extraSmall));
         }
@@ -84,7 +95,9 @@ List<NewsBlock> _convertArticleParsedJsonToBlocks(
                 .toList()));
       }
     }
-    if (child.content != null && (child.type == ArticleJsonChildType.header2 || child.type == ArticleJsonChildType.header3)) {
+    if (child.content != null &&
+        (child.type == ArticleJsonChildType.header2 ||
+            child.type == ArticleJsonChildType.header3)) {
       blocks.add(TextHeadlineBlock(text: child.content!));
     }
     if (child.type == ArticleJsonChildType.linebreak) {

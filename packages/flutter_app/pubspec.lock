@@ -25,22 +25,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0+2"
-  amplify_api:
-    dependency: "direct main"
-    description:
-      name: amplify_api
-      sha256: "39b7a94d53cbfb51e630838079dd08582c7f1ff483248b20d2124177b35fd34b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
-  amplify_api_dart:
-    dependency: transitive
-    description:
-      name: amplify_api_dart
-      sha256: "0cb295fa2805215b0e63cdc8d112bfb7638e4264dd5a1a4e857cdb36c9464846"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0+1"
   amplify_auth_cognito:
     dependency: "direct main"
     description:
