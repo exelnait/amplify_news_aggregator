@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
+import NewsFeed from './feed';
 
-export function Index() {
-  redirect('/feed');
+export default function Index() {
+  return NewsFeed();
 }
-
-export default Index;
