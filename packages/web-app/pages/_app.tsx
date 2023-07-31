@@ -1,12 +1,12 @@
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import './styles.css';
+import { Amplify } from 'aws-amplify';
 import { ApolloProvider } from '@apollo/client';
 import { Authenticator, ThemeProvider } from '@aws-amplify/ui-react';
 
+import './styles.css';
 import '@aws-amplify/ui-react/styles.css';
 import { studioTheme } from '../ui-components';
-import { Amplify } from 'aws-amplify';
 
 import awsConfig from './../aws-exports';
 
