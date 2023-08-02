@@ -1,2 +1,2 @@
-schema: app/graphql/schema.graphql
-documents: 'app/data/**/*.graphql'
+schema: graphql/schema.graphql
+documents: 'data/**/*.graphql'

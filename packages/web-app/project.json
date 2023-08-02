@@ -18,6 +18,15 @@
         "production": {}
       }
     },
+    "build:graphql": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "local",
+      "options": {
+        "commands": ["graphql-codegen --config codegen.ts"],
+        "cwd": "packages/web-app",
+        "parallel": false
+      }
+    },
     "serve": {
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",

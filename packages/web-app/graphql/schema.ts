@@ -1618,6 +1618,13 @@ export type UserTopicsArgs = {
 
 export type BaseNewsItemFragment = { __typename?: 'NewsItem', id: string, title: string, description: string, type: SourceType, publishedAt: Date, cover?: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } | null, rss?: { __typename?: 'NewsItemDataRSS', url: string, coverUrl?: string | null } | null, youtube?: { __typename?: 'NewsItemDataYouTube', videoId: string, coverUrl?: string | null } | null, itunes?: { __typename?: 'NewsItemDataITunes', audioUrl: string, coverUrl?: string | null, durationFormatted?: string | null } | null, publisher: { __typename?: 'Publisher', id: string, title: string, avatar: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } } };
 
+export type GetNewsItemQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetNewsItemQuery = { __typename?: 'Query', getNewsItemRSS?: { __typename?: 'NewsItem', id: string, title: string, description: string, type: SourceType, publishedAt: Date, rss?: { __typename?: 'NewsItemDataRSS', contentHtml?: string | null, url: string, coverUrl?: string | null } | null, cover?: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } | null, youtube?: { __typename?: 'NewsItemDataYouTube', videoId: string, coverUrl?: string | null } | null, itunes?: { __typename?: 'NewsItemDataITunes', audioUrl: string, coverUrl?: string | null, durationFormatted?: string | null } | null, publisher: { __typename?: 'Publisher', id: string, title: string, avatar: { __typename?: 'Picture', resized?: { __typename?: 'ResizedPicture', medium: string } | null } } } | null };
+
 export type GetNewsFeedQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1707,6 +1714,44 @@ export const BaseUserFragmentDoc = gql`
   id
 }
     `;
+export const GetNewsItemDocument = gql`
+    query GetNewsItem($id: String!) {
+  getNewsItemRSS(input: {id: $id}) {
+    ...BaseNewsItem
+    rss {
+      contentHtml
+    }
+  }
+}
+    ${BaseNewsItemFragmentDoc}`;
+
+/**
+ * __useGetNewsItemQuery__
+ *
+ * To run a query within a React component, call `useGetNewsItemQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetNewsItemQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetNewsItemQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetNewsItemQuery(baseOptions: Apollo.QueryHookOptions<GetNewsItemQuery, GetNewsItemQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetNewsItemQuery, GetNewsItemQueryVariables>(GetNewsItemDocument, options);
+      }
+export function useGetNewsItemLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetNewsItemQuery, GetNewsItemQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetNewsItemQuery, GetNewsItemQueryVariables>(GetNewsItemDocument, options);
+        }
+export type GetNewsItemQueryHookResult = ReturnType<typeof useGetNewsItemQuery>;
+export type GetNewsItemLazyQueryHookResult = ReturnType<typeof useGetNewsItemLazyQuery>;
+export type GetNewsItemQueryResult = Apollo.QueryResult<GetNewsItemQuery, GetNewsItemQueryVariables>;
 export const GetNewsFeedDocument = gql`
     query GetNewsFeed {
   myUser {

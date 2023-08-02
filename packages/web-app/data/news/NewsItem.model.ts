@@ -8,7 +8,11 @@ export class NewsItemModel {
   coverUrl?: string;
   publisher!: PublisherModel;
   publishedAt!: Date;
-  publishedAtFormatted: string = '';
+  publishedAtFormatted = '';
+
+  content?: string;
+  videoId?: string;
+  audioUrl?: string;
 
   constructor(data: NewsItemModel) {
     Object.assign(this, data);
@@ -33,16 +37,19 @@ export class NewsItemModel {
         return {
           ...baseFields,
           coverUrl: baseFields.coverUrl || data.rss?.coverUrl,
+          content: data.rss?.contentHtml,
         };
       case SourceType.Youtube:
         return {
           ...baseFields,
           coverUrl: baseFields.coverUrl || data.youtube?.coverUrl,
+          videoId: data.youtube?.videoId,
         };
       case SourceType.Itunes:
         return {
           ...baseFields,
           coverUrl: baseFields.coverUrl || data.itunes?.coverUrl,
+          audioUrl: data.itunes?.audioUrl,
         };
     }
     return baseFields;

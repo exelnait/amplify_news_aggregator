@@ -1,5 +1,3 @@
-#import '../../../publisher/models/publisher_info.fragment.graphql'
-
 fragment BaseNewsItem on NewsItem {
     id
     title
