@@ -4,6 +4,7 @@ import {
   Button,
   useAuthenticator,
 } from '@aws-amplify/ui-react';
+import AppLayout from '../layout';
 
 export default function Settings() {
   const { user, signOut } = useAuthenticator();
@@ -19,3 +20,6 @@ export default function Settings() {
     </div>
   );
 }
+Settings.getLayout = function getLayout(page) {
+  return <AppLayout>{page}</AppLayout>;
+};

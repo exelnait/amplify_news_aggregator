@@ -89,6 +89,7 @@ export const handler: AppSyncResolverHandler<
           case SourceType.ITUNES: {
             // const feed = await parseRssFeed(source.itunes.url);
             title = 'Apple Podcasts';
+            //TODO: parse itunes podcast link https://www.labnol.org/podcast/
             sourcesToAggregate.push(SourceType.ITUNES);
             break;
           }

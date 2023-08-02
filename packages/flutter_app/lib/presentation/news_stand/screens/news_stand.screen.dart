@@ -27,7 +27,7 @@ class NewsStandScreen extends HookWidget {
           color: Colors.transparent,
           child: ListView(
             children: <Widget>[
-              ...data?.listTopics?.items.map((topic) {
+              ...data?.myUser.topics?.items.map((topic) {
                     var publishers = topic?.publishers?.items
                             .map((p) => PublisherModel.fromFragment(p!))
                             .toList() ??

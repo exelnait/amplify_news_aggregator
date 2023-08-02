@@ -1,12 +1,13 @@
 import { useRouter } from 'next/router';
 
-import { useGetPublisherNewsFeedLazyQuery } from '../../graphql/schema';
-import { NewsItemModel } from '../../data/data';
-import { NewsCard } from '../../presentation/news/components/NewsCard';
-import { PageLoader } from '../../presentation/common/common.presentation';
+import { useGetPublisherNewsFeedLazyQuery } from '../../../graphql/schema';
+import { NewsItemModel } from '../../../data/data';
+import { NewsCard } from '../../../presentation/news/components/NewsCard';
+import { PageLoader } from '../../../presentation/common/common.presentation';
 import { useEffect } from 'react';
+import AppLayout from '../layout';
 
-export default function NewsFeed() {
+export default function PublisherNewsFeed() {
   const router = useRouter();
   const [getPublisherNewsFeed, { data, loading, error }] =
     useGetPublisherNewsFeedLazyQuery();
@@ -31,3 +32,6 @@ export default function NewsFeed() {
     </div>
   );
 }
+PublisherNewsFeed.getLayout = function getLayout(page) {
+  return <AppLayout>{page}</AppLayout>;
+};
