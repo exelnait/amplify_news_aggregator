@@ -23,6 +23,7 @@ export type AmplifyDependentResourcesAttributes = {
   "function": {
     "NewsAggregatorAggregateITunesFeed": {
       "Arn": "string",
+      "CloudWatchEventRule": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
@@ -30,6 +31,7 @@ export type AmplifyDependentResourcesAttributes = {
     },
     "NewsAggregatorAggregateRSSFeed": {
       "Arn": "string",
+      "CloudWatchEventRule": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
@@ -37,6 +39,7 @@ export type AmplifyDependentResourcesAttributes = {
     },
     "NewsAggregatorAggregateYouTubeFeed": {
       "Arn": "string",
+      "CloudWatchEventRule": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",
       "Name": "string",
